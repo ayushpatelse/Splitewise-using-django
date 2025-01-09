@@ -1,0 +1,173 @@
+
+**Splitwise Clone Development Plan**
+
+**1. Introduction**
+
+This document outlines a comprehensive plan for developing a web application that closely mirrors the functionality of Splitwise, a popular expense-sharing platform. The application will be built using Python with the Django framework for the backend, Tailwind CSS and JavaScript for the frontend, and hosted on Vercel.
+
+**2. Core Features**
+
+* **User Authentication**
+    * Secure user registration and login using Django's built-in authentication system or `django-allauth`.
+    * Ability for users to connect with friends (potentially with social media integration).
+* **Expense Management**
+    * Creation, editing, and deletion of expenses.
+    * Assignment of expenses to multiple users with varying shares (percentage or fixed amounts).
+    * Categorization of expenses (e.g., food, travel, entertainment).
+    * Option to attach images or receipts to expenses.
+* **Group Management**
+    * Creation and management of groups for shared expenses.
+    * Different permission levels for group members (e.g., admin, regular member).
+* **Settlements**
+    * Calculation of balances between users.
+    * Options for settling up (e.g., cash, bank transfer, online payment gateways).
+    * Tracking of settlement history.
+* **Notifications**
+    * Notifications for new expenses, settlements, and other events (consider Django Channels for real-time notifications).
+
+**3. Technical Specifications**
+
+* **Backend (Python/Django)**
+    * **Models:**  Define Django models for users, groups, expenses, and settlements using Django ORM.
+        * **User:** `username`, `email`, `password`, `friends` (ManyToManyField to self)
+        * **Group:** `name`, `members` (ManyToManyField to User), `creator` (ForeignKey to User)
+        * **Expense:** `amount`, `description`, `category`, `payer` (ForeignKey to User), `group` (ForeignKey to Group), `date`, `image` (ImageField)
+        * **ExpenseShare:** `expense` (ForeignKey to Expense), `user` (ForeignKey to User), `share` (DecimalField)
+        * **Settlement:** `payer` (ForeignKey to User), `payee` (ForeignKey to User), `amount`, `date`
+    * **Views:**  Implement views for handling user requests, data processing, and rendering templates.
+        * `create_expense`, `edit_expense`, `delete_expense`, `create_group`, `add_friend`, `settle_up`, etc.
+    * **Templates:** Use Django's template engine to create dynamic HTML pages.
+    * **Forms:**  Utilize Django's forms framework for user input and validation.
+    * **REST API:** Develop a REST API using Django REST framework to facilitate frontend interaction.
+* **Frontend (Tailwind CSS, JavaScript)**
+    * **Component-Based Structure:**  Build reusable UI components using React, Vue.js, or plain JavaScript.
+    * **State Management:**  Choose a state management solution like Redux, Vuex, or Zustand if necessary.
+    * **User Experience:**  Prioritize a clean, intuitive, and user-friendly interface.
+* **Hosting (Vercel)**
+    * **Deployment:**  Follow Vercel's documentation for Django deployment.
+    * **Serverless Functions:**  Consider using serverless functions for tasks like sending emails or image processing.
+
+**4. Development Roadmap**
+
+* **Phase 1:  Backend Development**
+    * Set up Django project and configure settings.
+    * Design and implement database models.
+    * Develop core views and API endpoints.
+    * Write unit and integration tests.
+* **Phase 2:  Frontend Development**
+    * Design and implement UI components.
+    * Integrate with the backend API.
+    * Implement user authentication and authorization.
+    * Focus on user experience and responsiveness.
+* **Phase 3:  Testing and Deployment**
+    * Conduct thorough testing (unit, integration, and user acceptance testing).
+    * Deploy the application to Vercel.
+    * Monitor performance and address any issues.
+
+**5. Technology Stack**
+
+* **Backend:** Python 3, Django 4, Django REST framework, PostgreSQL (or your preferred database)
+* **Frontend:** Tailwind CSS, JavaScript (with optional framework like React or Vue.js)
+* **Hosting:** Vercel
+* **Version Control:** Git
+
+**6. Future Enhancements**
+
+* **Mobile App:**  Develop a mobile app using React Native or Flutter.
+* **Advanced Features:**  Explore features like recurring expenses, expense reminders, and budgeting tools.
+* **Internationalization:**  Support multiple languages and currencies.
+* **Accessibility:**  Ensure accessibility for users with disabilities.
+
+**7. Conclusion**
+
+This plan provides a solid foundation for developing a comprehensive Splitwise clone. By following a structured approach, leveraging the chosen technologies, and prioritizing user experience, the project can achieve its goals and deliver a valuable expense-sharing solution.
+
+**Remember:** This is a template. You'll need to fill in the specific details, code examples, and design choices based on your project requirements and preferences. You can then copy this content into a document editor and export it as a PDF. Good luck!
+
+
+-------------------------------------------Models---------------------------------------------------------------------
+
+Person
+
+Name: string (Default: -)
+User: OneToOneField ( with user models, CASCADE on Delete)
+image: Image (Default)
+
+Groups
+
+groupName: string (Default: -)
+made_by: Relationship (Two-way Relationship with Users; Many to one, Attribute Key (related collection): groups, Cascade on delete)
+members: Relationship (Two-way Relationship with Users; Many to Many, Attribute Key (related collection): UserMember, Set Null on delete)
+
+Expense 
+
+amount: FloatField (default=0.0)
+description: TextField ()
+payer: ForeignKey with Person, on_delete=models.CASCADE
+group: ForeignKey with Group, on_delete=models.CASCADE
+date: DateTimeField ( set auto now true)
+image: ImageField ( default )
+
+
+ExpenseShare
+
+expsAmount: FloatField
+expsPerson: ForeignKey with person
+expense: ForeignKey with Expense
+
+Settlement
+
+payer: ForeignKey with Person,on_delete = model.CASCADE
+payee: ForeignKey with Person,on_delete = model.CASCADE
+amount: FloatField field  
+date: DateTimeField (auto_created=now)
+group: ForeignKey with Group,on_delete = model.CASCADE
+
+Balances
+
+person: ForeignKey with Person
+amount: FloatField field (amount owed : postive(+), amount gets back: negative(-)) 
+group: ForeignKey field with group
+updated_date: DateTimeField ()
+rPerson: receiver person
+
+SettleTrans
+
+balance: ForeignKey with balance
+settlement: ForeignKey with settlement
+---------------------------------------------Signals--------------------------------------------------
+
+Function: create_person (Using User model for auth)
+- Creates person when new User register
+
+Function: create_initial_balance_group
+- creates balance with each member
+
+Function: create_expense_share_balance 
+- Populates shares of each member of group in expense share ,when new expense is added
+- Adjust the balance according to the new balance
+
+Function: delete_expense_adjust_balance
+- 
+Function: adjust_balance
+- changes balance when new settlement is created  
+
+Function: adjust_balance_new_expense ( not devloped )
+- change balance with new expense 
+
+Expesne delete
+- get all balance and reduce the amount of ExpenseShare 
+- add the balance in payer of expense
+
+- reduce the balance where payer is 
+
+
+Bugs Found 
+- when payer is changed the balance is not changed
+
+--------------------------------------------------Notes-----------------------------------------
+expense share is not created , as currently updating members included in expense
+
+ExpenseShare
+- Once the ExpenseShare created
+    - get the balance of payer and the person whose owing

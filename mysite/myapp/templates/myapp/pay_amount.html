@@ -1,0 +1,77 @@
+{% extends 'myapp/base.html' %}
+
+{% load static %}
+{% block body %}
+<div  class="flex bg-zinc-700 min-h-screen">
+  <div class="w-1/5 text-white">
+      <div class="flex justify-center p-5">
+          <span class=" text-2xl  flex items-center"> 
+            <a href="{% url 'group_index' group.id %}">
+              <span class="hover:underline underline-offset-8 ">Go Back</span> 
+            </a>
+          </span>
+        </div>        
+        <hr>
+  </div>
+  <div class="w-3/5 bg-gray-500">
+    
+    <div class="flex justify-center mt-2 ">
+      <form method="post" id="settle-form" action="" class=" mt-3 shadow-3xl border shadow-green-100 bg-green-100 rounded-lg p-3 ">
+        {% csrf_token %}
+       
+        
+
+        <h1 class="text-3xl mx-2 tracking-tighter mb-2 font-semibold">Settlement</h1>
+        <hr class="border border-t border-zinc-700">
+        <div class="px-2 mb-1 flex flex-wrap mt-2 ">
+            <label for="payer" class="mb-1 ">Payer :</label>
+            <select name="{{form.payer.name}}" class="ml-3 rounded-lg p-1 " id="{{form.payer.name}}">
+              {% for member in members %}
+              {% if  request.user == member.user %}
+              <option value="{{member.id}}" class="mx-2 my-3  rounded-lg p-1" selected>{{member.name}}</option>
+              {% else %}
+              <option value="{{member.id}}" class="mx-2 my-3  rounded-lg p-1">{{member.name}}</option>
+              {% endif %}
+              {% endfor %}
+            </select>
+        </div>
+
+        
+        <div class="px-2 mb-1 flex flex-wrap ">
+            <label for="payee" class="mb-1 ">Payee :</label >
+            <select name="{{form.payee.name}}" class="ml-3   rounded-lg p-1" id="{{form.payee.name}}">
+              {% for member in members %}
+              {% if  data.payer_id and member.id == data.payer_id %}
+                <option value="{{member.id}}"  class="" selected>{{member.name}}</option>
+              {% else %}
+                <option value="{{member.id}}"  class="" >{{member.name}}</option>
+              {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+        
+        <div class="px-2 mb-1 flex flex-wrap ">
+            <label for="amount" >Amount :</label>
+            <input type="number" name="{{form.amount.name}}" value="{{data.amount}}"  class="border ml-2 border-zinc-300 hover:bg-zinc-50 rounded-md  p-1  outline-none" >            
+        </div>
+        <div class="px-2 mb-1 flex flex-wrap ">
+            <label for="group" class="">Group :</label>
+            <input name="{{form.group.name}}" value="{{group.groupName}}" class=" border ml-2 border-zinc-300 hover:bg-zinc-50 rounded-md  p-1  outline-none"  id="">
+        </div>
+
+
+        <button type="submit" class="ml-[25px] px-3 text-white py-2 bg-orange-500/80 hover:bg-orange-500/100 rounded-lg shadow-lg shadow-orange-500/50" > Submit</button>
+    </form> 
+        
+       
+    </div>
+  </div>
+  <div class="w-1/5">
+
+  </div>
+ </div>
+    
+ <script>
+  
+</script>
+{% endblock %}

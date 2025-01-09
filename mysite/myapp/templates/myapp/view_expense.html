@@ -1,0 +1,85 @@
+{% extends 'myapp/base.html' %}
+
+{% load static %}
+{% block body %}
+
+    <div class="flex bg-zinc-700 min-h-screen">
+
+        <div class="w-1/5 text-white">
+            <div class="flex justify-center p-5">
+                <span class=" text-2xl  flex items-center"> 
+                  <a href="{% url 'group_index' expense.group.id %}">
+                    <span class="hover:underline underline-offset-8 ">Go Back</span> 
+                  </a>
+                </span>
+              </div>        
+              <hr>
+            
+            
+        </div>
+        <div class="w-3/5 bg-zinc-500">
+            <div class="flex justify-center py-3 " style="background-image: url('../../../static/images/uses/def_bg.jpg');">
+                <span class="text-3xl text-white"> {{expense.group.groupName}}</span>
+            </div>
+            
+            <div class="">
+                
+            </div>
+            <div class="container px-20 py-10 ">
+                <div class="bg-gray-800 text-white rounded-lg">
+                    <div class="flex justify-between gap-4  px-5 py-3">
+                    
+                        <div class="">
+                            <div class="pl-3 text-3xl mb-4">{{expense.expenseName}}</div>
+                            <img class="pl-3" src="../../../static/images/uses/default-1.jpg" width="70px" alt="image">
+                            <div class="m-3">
+                            $<span class="text-green-500">{{expense.amount}}</span>
+                            <br>
+                            <textarea name="" id=""  cols="10" rows="5" class="p-2 mt-3 resize-none border bg-transparent border-gray-700">
+                                {{expense.description}}
+                            </textarea>
+                                
+                            </div>
+                            
+                        </div>
+                        
+                        <div class=" px-6  pt-2">
+                            <span class="text-md">{{expense.payer.name.capitalize}} add on : <span class="text-zinc-500"> {{expense.date|date:"j M Y"}}</span></span>
+                            <h1 class="mt-5 flex">Included:
+                            <ul class="pl-3 text-zinc-300 list-desc text-sm capitalize">
+                               {% for share in shares %}
+                                <li>{{share.expsPerson}} <span class="text-orange-300">owes </span>{{share.expsAmount}}</li>
+                               {% endfor%}
+                                
+                            </ul>
+                        </h1>
+                        </div>
+                        <div class="  mt-3 text-3xl ">
+                            <a href="{% url 'edit_expense' expense.id %}">
+                                <span class="material-icons text-yellow-500">edit</span>
+                            </a>
+                            |
+                            <a href="{% url 'delete_expense' expense.id %}">
+                                <span class="material-icons text-red-500">delete</span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="py-2 px-4">
+                        <hr>
+                        <div>
+                            chart
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            
+        </div>
+        <div class="w-1/5 ">
+            
+        </div>
+    </div>
+
+{% endblock %}

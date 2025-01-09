@@ -1,0 +1,53 @@
+{% load static %}
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+        <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    </head>
+
+	<body  >
+        <nav style="background-color: #69C6AC;position: relative;" class="w-full">
+            <div class=" flex justify-between p-3">
+                <div >
+                    <a href="{% url 'index' %}" class="flex tracking-tighter">
+                        
+                    <img src="{% static 'images/uses/logo.png' %}" class="w-14 mx-3" alt="Img">
+                    <span class="text-white text-5xl ">Splitwise</span>
+                    </a>
+                </div>
+                <div class="flex" >
+                    <a ></a>
+                    
+                    <div class="justify-self-end flex mx-4 inner-block align-text-bottom ">
+                        <div class="hover:text-green-500 cursor-pointer">
+                            <a href="">
+                                <img src="{% static 'images/uses/default-1.jpg' %}" class="w-10  " style="border-radius: 50%;" alt="img">
+                                <span class="text-white ">{{request.user.username}}</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="flex space-x-5   space-y-3 block font-bold text-orange-300 ">
+                        {% if user.is_authenticated %}
+                        <form action="{% url 'logout' %}" class="group space-y-3" method="post" >
+                            {% csrf_token %}
+                            <button type="submit" class="hover:text-orange-500 text-white hover:brightness-150" >Logout</button>
+                        </form>
+                        {% else %}
+                        <a href="{% url 'login' %}" class="	 hover:text-orange-500 hover:brightness-150 text-white">Login</a>
+                        {% endif %}
+                        <a href="{% url 'register' %}" class=" hover:text-orange-500  hover:brightness-150 text-white">Register</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+            {% block body %}
+            {% endblock %}
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script src="{% static 'javascripts/main.js' %}"></script>
+	</body>
+</html>
