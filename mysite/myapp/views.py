@@ -193,6 +193,7 @@ def edit_expense(request,expid):
 
             shares.delete()
             
+            # shame logic as 
             if len(amounts)>0 and splitType=='unequal':
                 print('list amount',"members",members,"amounts",amounts,"splitType",splitType)
                 create_expense_shares(expense,splitType,members,amounts)
