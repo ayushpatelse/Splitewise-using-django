@@ -136,20 +136,20 @@ def add_expense(request,gid):
         if expense_form.is_valid():
             expense = expense_form.save()
             members = request.POST.getlist('members-included') or None
-            amounts = request.POST.getlist('members-amount') 
+            amounts = request.POST.getlist('members-included-amount') 
             splitType =  request.POST.get('divide-amount-select')
             
             if len(amounts)>0 and splitType=='unequal':
-                # print('list amount',"members",members,"amounts",amounts,"splitType",splitType)
+                print("list members",members,"amounts",amounts,"splitType",splitType)
                 create_expense_shares(expense,splitType,members,amounts)
             elif splitType=='percent':
                 percent = amounts
+                print(" percent members",members,"amounts",amounts,"splitType",splitType)
                 create_expense_shares(expense,splitType,members,expense.amount,percent)        
             else:
-                amounts = expense.amount
-                # print("members",members,"amounts",amounts,"splitType",splitType)
-                create_expense_shares(expense,splitType,members,expense.amount)
-            print(members,amounts)
+                print("members",members,"amounts",amounts,"splitType",splitType)
+                create_expense_shares(expense,splitType,members,expense.amount)        
+
             return redirect('group_index',gid)
     else:
         expense_form = AddExpense()
@@ -177,50 +177,39 @@ def edit_expense(request,expid):
     c_group = Group.objects.get(id=expense.group.id)  # Get the Group object
     # Access the members of the group
     lists_member = c_group.members.all()
-    m_ids_shares = [share.expsPerson.id for share in shares] 
-    # print(m_ids_shares)
+    shareIds = [share.expsPerson.id for share in shares]
+    
     if request.method == "POST":
         expense_form = AddExpense(request.POST,instance=expense)
     
         if expense_form.is_valid():
             expense = expense_form.save()
             members = request.POST.getlist('members-included') or None
-            amounts = request.POST.getlist('members-included-amount') 
+            amounts = request.POST.getlist('members-included-amount') or [None]
             splitType =  request.POST.get('divide-amount-select')
-            # check the remaining value
-            print('Before forloop',[ str(members[i] + ':' + amounts[i]) for i in range(len(members)) ])
-            for id in m_ids_shares:
-                if str(id) in members:
-                    m_share = shares.get(expsPerson__id=id)
-                    index = members.index(str(id))
-                                           
-                    if  len(amounts)>0:
-                        if m_share.expsAmount != int(amounts[index]):
-                            m_share = int(amounts[index])
-                            # m_share.save()
-                        amounts.pop(index)
-                    members.pop(index)
-                else: 
-                    m_share = shares.get(expsPerson__id=id)
-                    print(m_share,False)
-            print('After forloop',[ str(members[i] + ':' + amounts[i]) for i in range(len(members)) ])
             
+            if '' in amounts:
+                amounts = [amount for amount in amounts if amount!='' ]
 
-            # if len(amounts)>0 and splitType=='unequal':
-            #     print('list amount',"members",members,"amounts",amounts,"splitType",splitType)
-            #     # create_expense_shares(expense,splitType,members,amounts)
-            # elif splitType=='percent':
-            #     print('percent amount',"members",members,"amounts",amounts,"splitType",splitType)
-            #     percent = amounts
-            #     # create_expense_shares(expense,splitType,members,expense.amount,percent)        
-            # else:
-            #     amounts = expense.amount
-            #     print("members",members,"amounts",amounts,"splitType",splitType)
-            #     # create_expense_shares(expense,splitType,members,expense.amount)
-            #return redirect('group_index',c_group.id)
+            shares.delete()
+            
+            if len(amounts)>0 and splitType=='unequal':
+                print('list amount',"members",members,"amounts",amounts,"splitType",splitType)
+                create_expense_shares(expense,splitType,members,amounts)
+            elif splitType=='percent':
+                print('percent amount',"members",members,"amounts",amounts,"splitType",splitType)
+                percent = amounts
+                create_expense_shares(expense,splitType,members,expense.amount,percent)        
+            else:
+                amounts = expense.amount
+                print("members",members,"amounts",amounts,"splitType",splitType)
+                create_expense_shares(expense,splitType,members,expense.amount)
+            
+            shareIds = [int(id) for id in members]
+            
     else:
         expense_form = AddExpense(instance=expense)
-    return render(request,'myapp/edit_expense.html',{'form':expense_form,'expense':expense,"lists_member":lists_member,'exp_members':m_ids_shares})
+    return render(request,'myapp/edit_expense.html',{'form':expense_form,'expense':expense,"lists_member":lists_member,'exp_members':shareIds,'shares':shares})
 
 @login_required
 def pay_amount(request,gid):
