@@ -143,10 +143,11 @@
       var input = document.getElementById('members-included-amount-'+ids[index])
       if(divs[index].checked===true ){
         input.removeAttribute('disabled')
+        input.removeAttribute('hidden')
         input.classList.remove('opacity-0')
       }
       else{
-        input.setAttribute('disabled',true)
+        input.setAttribute('hidden',true)
         input.classList.add('opacity-0')  
       }
       //console.log(divs[index])
@@ -160,6 +161,7 @@
         console.log("divide.value!='equal'",divide.value!='equal')
       amount_list.forEach(element => {
         element.removeAttribute('disabled');
+        element.removeAttribute('hidden');
         element.style.opacity = 100;
       });
       
@@ -169,6 +171,7 @@
         console.log("divide.value==='equal'",divide.value==='equal');
         amount_list.forEach(element => {
             element.setAttribute('disabled',true);
+            element.setAttribute('hidden',true);
             element.style.opacity= 0;
         });
     };
