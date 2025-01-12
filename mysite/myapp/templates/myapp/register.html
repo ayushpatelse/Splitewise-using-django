@@ -2,45 +2,59 @@
 
 {% load static %}
 {% block body %}
-    <div class="flex justify-center mt-[100px] ">
-            <form method="post" action="{% url 'register' %}" class="shadow-3xl border shadow-green-100 bg-green-50 rounded-lg p-3">
-                {% csrf_token %}
-               
-                <h1 class="text-3xl mx-2 tracking-tighter font-semibold">Welcome to Splitewise</h1>
-                {% if user.errors %}
-                <ul class="errorlist">
-                  {% for field in user%}
-                    {% for error in field.errors %}
-                      <li>{{ error }}</li>
-                    {% endfor %}
-                  {% endfor %}
-                  {% for error in user.non_field_errors %}
+    
+    <div class="flex bg-gray-700 min-h-screen">
+      <div class="w-1/5">
+  
+      </div>
+      <div class="w-3/5">
+        <div class="flex justify-center mt-[100px] ">
+          <form method="post" action="{% url 'register' %}" style="background-image: url('static/images/uses/expense-management.png'); 
+          background-size: cover;
+           
+          background-repeat: no-repeat;background-position: center;" class="shadow-3xl border shadow-green-100 bg-green-50 rounded-lg p-3">
+              {% csrf_token %}
+             
+              <h1 class="text-3xl w-full px-2 tracking-tighter font-semibold" >Welcome to Splitewise</h1>
+              <hr>
+              {% if user.errors %}
+              <ul class="errorlist">
+                {% for field in user%}
+                  {% for error in field.errors %}
                     <li>{{ error }}</li>
                   {% endfor %}
-                </ul>
-              {% endif %}
-                <div class="p-3 flex flex-wrap ">
-                    <label for="username" class="w-full">Username</label>
-                    <input type="text" name="{{user.username.name}}" id="{{user.username.name}}" class="border rounded-md hover:bg-zinc-50 border-zinc-300 p-1 w-full outline-none"  >
-                </div>
+                {% endfor %}
+                {% for error in user.non_field_errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+              <div class="p-3 flex flex-wrap ">
+                  <label for="username" class="w-full">Username</label>
+                  <input type="text" name="{{user.username.name}}" id="{{user.username.name}}" class="border rounded-md hover:bg-zinc-50 border-blue-300 p-1 w-full outline-none"  >
+              </div>
 
-                
-                
-                <div class="p-3 flex flex-wrap ">
-                    <label for="username" class="w-full">Email</label>
-                    <input type="text" name="{{user.email.name}}" id="{{user.email.name}}" class="border  border-zinc-300 hover:bg-zinc-50 rounded-md p-1 w-full outline-none"  >
-                </div>
-                
-                <div class="p-3 flex flex-wrap ">
-                    <label for="username" class="w-full">Password</label>
-                    <input type="password" name="{{user.password.name}}" id="{{user.password.name}}" class="border border-zinc-300 hover:bg-zinc-50 rounded-md  p-1 w-full outline-none"  >
-                </div>
-                
-               
-                <button type="submit" class="ml-[25px] px-3 text-white py-2 bg-orange-500/80 hover:bg-orange-500/100 rounded-lg shadow-lg shadow-orange-500/50" > Submit</button>
-                <span class="block text-xs ml-4 mt-2">Already have an account! <a href="{% url 'login' %}" class="text-blue-500">Click here </a></span>
-            </form>
-        </div>
-    </div>
-
+              
+              
+              <div class="p-3 flex flex-wrap ">
+                  <label for="username" class="w-full">Email</label>
+                  <input type="text" name="{{user.email.name}}" id="{{user.email.name}}" class="border  border-blue-300 hover:bg-zinc-50 rounded-md p-1 w-full outline-none"  >
+              </div>
+              
+              <div class="p-3 flex flex-wrap ">
+                  <label for="username" class="w-full ">Password</label>
+                  <input type="password" name="{{user.password.name}}" id="{{user.password.name}}" class="border border-green-500 border-3 hover:bg-zinc-50 rounded-md  p-1 w-full outline-none"  >
+              </div>
+              
+             
+              <button type="submit" class="ml-[25px] px-3 text-white py-2 bg-orange-500/80 hover:bg-orange-500/100 rounded-lg shadow-lg shadow-orange-500/90" > Register</button>
+              <span class="block text-xs ml-4 mt-2">Already have an account! <a href="{% url 'login' %}" class="text-blue-500">Click here </a></span>
+          </form>
+      </div>
+  </div>
+      </div>
+      <div class="w-1/5">
+      </div>
+  </div>
+  
 {% endblock %}

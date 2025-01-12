@@ -2,33 +2,54 @@
 
 {% load static %}
 {% block body %}
-    <div class="flex justify-center  ">
-            <form method="post" action="{% url 'login' %}" class="shadow-3xl border mt-[100px] shadow-green-100 bg-green-50 rounded-lg p-3">
-                {% csrf_token %}
-               
-                <div class="">
+<div class="flex bg-gray-700 min-h-screen">
+    <div class="w-1/5">
 
-                    <h1 class="text-3xl  ml-3 tracking-tighter font-semibold"> Login</h1>
-                </div>
+    </div>
+    <div class="w-3/5">
+        <div class="flex justify-center   ">
+            <div >
+                <form method="post" action="{% url 'login' %}" style="background-image: url('static/images/uses/expense-management.png'); 
+                background-size: cover;
+                 
+                background-repeat: no-repeat;background-position: center;"
                 
-                <div class="p-5 flex flex-wrap ">
-                    <label for="email" class="w-full">Username</label>
-                    <input type="text" name="username" id="username" class="border rounded-md hover:bg-zinc-50 border-zinc-300 p-1 w-full outline-none"  >
-                </div>
-                
-                <div class="p-5 flex flex-wrap ">
-                    <label for="password" class="w-full">Password</label>
-                    <input type="password" name="password" id="password" class="border rounded-md hover:bg-zinc-50 border-zinc-300 p-1 w-full outline-none"  >
-                </div>
-                
-               
-                <button type="submit" class="ml-[25px] px-3 py-2 bg-orange-500/70  hover:bg-orange-500  rounded-lg text-white shadow-lg shadow-orange-500/50" > Submit</button>
-                <span class="block text-xs ml-4 mt-2">New to Splitewise! <a href="{% url 'register' %}" class="text-blue-500">Click here </a></span>
-            </form>
+                    class="shadow-3xl  border mt-[100px] shadow-green-100 bg-green-50 rounded-lg p-3">
+                    {% csrf_token %}
 
-           
-               
+                    <div class="">
+
+                        <h1 class="text-3xl   ml-3 tracking-tighter font-semibold"> Login</h1>
+                    </div>
+
+                    <div class="p-5 flex flex-wrap ">
+                        <label for="email" class="w-full">Username</label>
+                        <input type="text" name="username" id="username"
+                            class="border border-3 rounded-md hover:bg-zinc-50 border-blue-300 p-1 w-full outline-none">
+                    </div>
+
+                    <div class="p-5 flex flex-wrap ">
+                        <label for="password" class="w-full">Password</label>
+                        <input type="password" name="password" id="password"
+                            class="border border-3 rounded-md hover:bg-zinc-50 border-blue-300 p-1 w-full outline-none">
+                    </div>
+
+
+                    <button type="submit"
+                        class="ml-[25px] px-3 py-2 bg-orange-500/90  hover:bg-orange-500  rounded-lg text-white shadow-lg shadow-orange-500/50">
+                        Submit</button>
+                    <span class="block text-xs ml-4 mt-2">New to Splitewise! <a href="{% url 'register' %}"
+                            class="text-blue-500">Click here </a></span>
+                </form>
+                <!-- <img src="{% static 'images/uses/expense-management.png' %}" alt="img"> -->
+        
+
+
+            </div>
         </div>
     </div>
+    <div class="w-1/5">
+    </div>
+</div>
 
 {% endblock %}
