@@ -11,4 +11,8 @@ def make_positive(value):
 def add(value,arg):
     return value + arg
 
+@register.filter
+def length(value):
+    return len(value)
+
 
