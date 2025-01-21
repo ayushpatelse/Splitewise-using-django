@@ -1,7 +1,7 @@
 # Splitewise-using-django
 
 
--------------------------------------------Models---------------------------------------------------------------------
+Models
 
 Person
 
@@ -51,6 +51,7 @@ SettleTrans
 
 balance: ForeignKey with balance
 settlement: ForeignKey with settlement
+
 ---------------------------------------------Signals--------------------------------------------------
 
 Function: create_person (Using User model for auth)
