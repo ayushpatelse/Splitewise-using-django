@@ -129,3 +129,5 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"),
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/login'
+
+ALLOWED_HOSTS = ['your-vercel-app-name.vercel.app', 'vercel.app', '127.0.0.1'] 
