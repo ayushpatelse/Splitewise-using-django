@@ -32,9 +32,15 @@ class Expense(models.Model):
         return self.expenseName
     
 class ExpenseShare(models.Model):
+    SPLIT_TYPE = {
+        (1,'equal'),
+        (2,'unequal'),
+        (3,'percent'),
+    }
     expsAmount = models.FloatField()
     expsPerson = models.ForeignKey(Person,on_delete=models.CASCADE)
     expense = models.ForeignKey(Expense,on_delete=models.CASCADE)
+    splitType = models.CharField(max_length=50,default='equal')
 
     def __str__(self):
         return  self.expsPerson.name + ' shares ' + str(self.expsAmount) +  ' in ' + self.expense.expenseName +"Of " + self.expense.group.groupName
