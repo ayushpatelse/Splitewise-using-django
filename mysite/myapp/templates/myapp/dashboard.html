@@ -1,0 +1,78 @@
+{% extends 'myapp/base.html' %}
+
+{% load static %}
+{% load filters %}
+{% block title %}
+Dashboard : {{request.user}}
+{% endblock %}
+{% block body %}
+
+<div class="flex bg-zinc-700 min-h-screen">
+
+    <div class="w-1/5 text-white">
+
+    </div>
+    <div class="w-3/5 bg-zinc-500">
+        <!-- Profile -->
+        <div class="flex px-5 text-white py-1 bg-base-100 justify-between ">
+            <div class="flex ">
+                <img src="{% static 'images/uses/default-1.jpg' %}" class="rounded-lg drop-shadow-lg  " style="height: 100px;"
+                    alt="user">
+                <span class="pl-2 mt-12 text-3xl  capitalize inline-block align-baseline">{{request.user}}</span>
+            </div>
+            <span class=" mt-12 text-3xl ">Total
+                {% if balance > 0 %}
+                Gets :$
+                <span class="text-green-500"> {{balance}}</span>
+                {% else %}
+                Owed :$
+                    <span class="text-orange-500"> {{balance}}</span>
+                {% endif %}
+            </span>
+        </div>
+        <hr>
+
+
+        <div class="grid grid-cols-2  bg-gray-700 divide-dashed min-h-screen">
+            <!-- Transaction History -->
+            <div class=" border-r-2 text-white">
+                <div class="flex justify-center py-2">
+                    <span class=" text-2xl  ">Transaction History</span>
+                </div>
+                <hr>
+
+                <ul class="pl-3 py-3 list-disc">
+                    {% for tran in trans %}
+                    <li>"{{tran}}"</li>
+                    {% endfor%}
+                </ul>
+            </div>
+            <!-- Group Settlement -->
+            <div class="text-white">
+                <div class="flex justify-center py-2">
+                    <span class=" text-2xl  ">Group </span>
+                </div>
+                <hr>
+                <ul class="px-5 py-1 text-xl">
+                    {% for key,val in groupBals.items %}
+                    <li>
+                        {{key}}
+                        {% if val >= 0 %}
+                        <span class="text-green-500">{{val|make_positive}}</span>
+                        {% else %}
+                        <span class="text-orange-500">{{val|make_positive}}</span>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="w-1/5 ">
+
+    </div>
+</div>
+
+
+
+{% endblock %}
