@@ -17,7 +17,6 @@ def create_person(sender,instance,created,**kwargs):
 @receiver(m2m_changed,sender=Group.members.through)
 def create_balance_group(sender,instance,action,**kwargs):
     group = instance
-    print(action)
     if action=='post_add':
         print("Create Balance: signal",action)
         members = group.members.all()
@@ -32,6 +31,7 @@ def create_balance_group(sender,instance,action,**kwargs):
                     ) 
     else:
         print("Create Balance:signal",action)
+
 
 # @receiver(post_save,sender=Expense)
 # def create_expense_share_balance(sender,instance,created,**kwargs):
@@ -93,29 +93,29 @@ def adjust_balance_expenseshare(sender,instance,created,**kwargs):
     if created:
         share = instance
         payer = share.expense.payer
-        print(share.id," : ",Balance.objects.filter(Q(person=share.expsPerson,rPerson=payer)| Q(person=payer,rPerson=share.expsPerson)))
-        balances = Balance.objects.filter(Q(person=share.expsPerson,rPerson=payer)| Q(person=payer,rPerson=share.expsPerson))
-        
+        group = share.expense.group
+        balances = Balance.objects.filter(group=group).filter(Q(person=share.expsPerson,rPerson=payer)| Q(person=payer,rPerson=share.expsPerson))
+       
         # Reduce the balance , where person = Expense Payer
-        redBalance = balances.filter(person=payer,rPerson=share.expsPerson)
+        addBalance = balances.filter(person=payer,rPerson=share.expsPerson)
        
         # print('redBalance :',redBalance)
         amt = share.expsAmount
-        if redBalance.count() > 0:
-            temp = redBalance.first()
-            temp.amount = temp.amount -  amt
-            temp.save()
-            # print("reduce Amount:",temp.amount ,'AmtShare',amtShare, 'final:',temp.amount -   amtShare)
-        
-        # Add the balance , where rPerson = Expense Payer
-        addBalance = balances.filter(person=share.expsPerson,rPerson=payer)
-        # print('addBalance :',redBalance)
         if addBalance.count() > 0:
             temp = addBalance.first()
+            temp.amount = temp.amount - amt
+            temp.save()
+            #print("reduce Amount:",temp.amount ,'AmtShare',amt, 'final:',temp.amount -  amt)
+            
+        # Add the balance , where rPerson = Expense Payer
+        redBalance = balances.filter(person=share.expsPerson,rPerson=payer)
+        # print('addBalance :',redBalance)
+        if redBalance.count() > 0:
+            temp = redBalance.first()
             temp.amount = temp.amount +  amt
             temp.save()
-            #print("add Amount:",temp.amount ,'AmtShare',amtShare, 'final:',temp.amount +   amtShare)
-
+           # print("add Amount:",temp.amount ,'AmtShare',amt, 'final:',temp.amount +   amt)
+            
     else:
         print("Expense error ,created:",created)
 
