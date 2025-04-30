@@ -1,4 +1,6 @@
+import json
 from django.contrib import messages
+from django.core.serializers import serialize
 import datetime
 from django.http import JsonResponse
 from django.shortcuts import render,redirect,get_object_or_404
@@ -7,7 +9,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Group,Person,Expense,ExpenseShare,Balance,Settlement,SettleTran
 from .forms import RegisterUser,CreateGroup,AddExpense,SettlementForm
 from django.db.models import Sum
-from .utils import remain_balance,create_expense_shares
+from .utils import remain_balance,create_expense_shares,expense_payer_change
+from django.db.models import Q
 # Create your views here.
 @login_required
 def index(request):
@@ -15,8 +18,30 @@ def index(request):
     person = Person.objects.get(user__id=request.user.id)
     #print("person",person.id)
     groups = Group.objects.all().filter(members=person)
-    balance = Balance.objects.filter(person=person).aggregate(total=Sum('amount'))['total'] or 0.0
-    return render(request,"myapp/index.html",{"groups":groups,"balance":balance,'groupBals':None})
+    balances = Balance.objects.filter(person=person)
+    balance = balances.aggregate(total=Sum('amount'))['total'] or 0.0
+    balanceList = {}
+    for group in groups:
+        print(balances.filter(group=group).aggregate(total=Sum('amount'))or 0.0)
+        balanceList[group.groupName.capitalize()] = balances.filter(group=group).aggregate(total=Sum('amount'))['total'] or 0.0
+    print(balanceList)
+    return render(request,"myapp/index.html",{"groups":groups,"balance":balance,'groupBals':balanceList})
+
+@login_required
+def dashboard(request):
+    person = Person.objects.get(user__id=request.user.id)
+    #print("person",person.id)
+    groups = Group.objects.all().filter(members=person)
+    balances = Balance.objects.filter(person=person)
+    balance = balances.aggregate(total=Sum('amount'))['total'] or 0.0
+    balanceList = {}
+    transList = Settlement.objects.filter(Q(payer=person)|Q(payee=person))
+    for group in groups:
+        # print(balances.filter(group=group).aggregate(total=Sum('amount'))or 0.0)
+        balanceList[group.groupName.capitalize()] = balances.filter(group=group).aggregate(total=Sum('amount'))['total'] or 0.0
+    print(transList)
+  
+    return render(request,"myapp/dashboard.html",{"groups":groups,"balance":balance,'groupBals':balanceList,"trans":transList})
 
 def register(request):
     if request.method == "POST":
@@ -71,9 +96,21 @@ def create_group(request):
 
 @login_required
 def group_index(request,id):
+    months= {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November', 12: 'December'}
     current_user = Person.objects.get(user=request.user)
     group = Group.objects.get(id=id)
     expense_list = Expense.objects.filter(group=group).order_by('-date')
+    expense_by_month = {}
+    for exp in expense_list:
+        month = months[exp.date.month]
+        year = str(exp.date.year)
+        key = month+ ' ' + year
+        if key not in expense_by_month.keys():
+            expense_by_month[key] = [exp]
+        else:
+            expense_by_month[key].append(exp)
+        print(expense_by_month)
+    print(expense_by_month)
     members = group.members.get_queryset()
     expShareList = ExpenseShare.objects.filter(expense__group=group)
     settlements = Settlement.objects.filter(group=group)
@@ -85,7 +122,7 @@ def group_index(request,id):
         total_amount = balances.filter(person=member).aggregate(total=Sum('amount'))['total']
         balance_dic[member.name] = total_amount
     indivBal = balances.filter(person=current_user)
-    context = {"balances":balance_dic,"User_bals":indivBal,"group":group,"members":members,'exp_lists':expense_list,'expShares':expShareList,"person":current_user}
+    context = {"balances":balance_dic,"User_bals":indivBal,"group":group,"members":members,'expShares':expShareList,"person":current_user,'expByMonth':expense_by_month}
     return render(request,"myapp/group_index.html",context=context)
 
 @login_required
@@ -98,7 +135,8 @@ def edit_group(request,id):
 @login_required
 def remove_member_group(request,gid,uid):
     group = Group.objects.get(id=gid)
-    person = Person.objects.get(user__id=uid)
+    person = Person.objects.get(id=uid)
+    print(group,uid)
     if person :
         if remain_balance(person.id,gid)==False:
             name = person.name.capitalize()
@@ -172,45 +210,57 @@ def delete_expense(request,expid):
 
 @login_required
 def edit_expense(request,expid):
-    expense = get_object_or_404(Expense,id=expid)
-    shares = ExpenseShare.objects.filter(expense=expense)
-    c_group = Group.objects.get(id=expense.group.id)  # Get the Group object
+    expense_obj = get_object_or_404(Expense,id=expid)
+    shares = ExpenseShare.objects.filter(expense=expense_obj)
+    expense_payer_id = expense_obj.payer.id
+    c_group = Group.objects.get(id=expense_obj.group.id)  # Get the Group object
     # Access the members of the group
     lists_member = c_group.members.all()
     shareIds = [share.expsPerson.id for share in shares]
-    
-    if request.method == "POST":
-        expense_form = AddExpense(request.POST,instance=expense)
-    
-        if expense_form.is_valid():
-            expense = expense_form.save()
-            members = request.POST.getlist('members-included') or None
-            amounts = request.POST.getlist('members-included-amount') or [None]
-            splitType =  request.POST.get('divide-amount-select')
-            
-            if '' in amounts:
-                amounts = [amount for amount in amounts if amount!='' ]
+    json_share = serialize('json',shares)
 
-            shares.delete()
-            
-            # shame logic as 
-            if len(amounts)>0 and splitType=='unequal':
-                print('list amount',"members",members,"amounts",amounts,"splitType",splitType)
-                create_expense_shares(expense,splitType,members,amounts)
-            elif splitType=='percent':
-                print('percent amount',"members",members,"amounts",amounts,"splitType",splitType)
-                percent = amounts
-                create_expense_shares(expense,splitType,members,expense.amount,percent)        
+    if request.method == "POST":
+        expense_form = AddExpense(request.POST,instance=expense_obj)
+        payer_changed = int(request.POST.get('payer')) != expense_payer_id   
+        if expense_form.is_valid():
+            if payer_changed:
+                print('payer change')
+                expense_id = request.POST.get('expense-id')
+                new_payer  = request.POST.get('payer')
+                expense_payer_change(expense_id=expense_id,new_payer_id=new_payer)
             else:
-                amounts = expense.amount
-                print("members",members,"amounts",amounts,"splitType",splitType)
-                create_expense_shares(expense,splitType,members,expense.amount)
+                print('Not Changed')
+            expense = expense_form.save()
+            members = request.POST.getlist('members-included') or []
+            amounts = request.POST.getlist('members-included-amount') or []
+            splitType =  request.POST.get('divide-amount-select') or 'equal'
             
-            shareIds = [int(id) for id in members]
+            # if '' in amounts:
+            #     amounts = [amount for amount in amounts if amount!='' ]
+            # shares.delete()
             
+            # # shame logic as 
+            # if len(amounts)>0 and splitType=='unequal':
+            #     print('list amount',"members",members,"amounts",amounts,"splitType",splitType)
+            #     create_expense_shares(expense,splitType,members,amounts)
+            # elif splitType=='percent':
+            #     print('percent amount',"members",members,"amounts",amounts,"splitType",splitType)
+            #     percent = amounts
+            #     create_expense_shares(expense,splitType,members,expense.amount,percent)        
+            # else:
+            #     amounts = expense.amount
+            #     print("members",members,"amounts",amounts,"splitType",splitType)
+            #     create_expense_shares(expense,splitType,members,expense.amount)
+            # try:
+            #     shareIds = [int(id) for id in members]
+            # except Exception as error:
+            #     print(error)
+            
+            return redirect('group_index',expense_obj.group.id)
+
     else:
-        expense_form = AddExpense(instance=expense)
-    return render(request,'myapp/edit_expense.html',{'form':expense_form,'expense':expense,"lists_member":lists_member,'exp_members':shareIds,'shares':shares})
+        expense_form = AddExpense(instance=expense_obj)
+    return render(request,'myapp/edit_expense.html',{'form':expense_form,'expense':expense_obj,"lists_member":lists_member,'exp_members':shareIds,'jShares':json_share})
 
 @login_required
 def pay_amount(request,gid):
