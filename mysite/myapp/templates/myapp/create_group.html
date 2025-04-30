@@ -2,49 +2,94 @@
 
 {% load static %}
 {% block body %}
-    <div class="flex justify-center ">
+    
+<div class="flex bg-zinc-700 min-h-screen">
+
+    <div class="w-1/5 text-white px-2 py-4">
+        <span class=""><a href="{% url 'index' %}">Back to Index</a></span>
+        <hr>
+    </div>
+    <div class="w-3/5 bg-zinc-500">
+        <div class="flex justify-center ">
         
-        {% if messages %}
-        <ul class="messages mx-3 my-2 rounded my-1" >
-            {% for message in messages %}
-            <div class="message-{{message.tags}}">
-                {% if message.tags  %}
-                <li style="color: red;border: 1px solid rgb(206, 0, 0); padding: 5px 10px;border-radius: 10px;background-color: rgb(255, 166, 166);" >{{ message }}</li>
-                {% endif %}
-            </div>
-            {% endfor %}
-        </ul>
-        {% endif %}
-    </div>
-    <div class="flex justify-center mt-14 ">
-            <form method="post" action="{% url 'create_group' %}" class="shadow-3xl border shadow-green-100 bg-green-100 rounded-lg p-3">
-                {% csrf_token %}
-                
-                <h1 class="text-3xl mx-2 tracking-tighter font-semibold">Create Group</h1>
-                
-                
-                <div class="p-3 flex flex-wrap ">
-                    <label for="group" class="w-full">Name</label>
-                    <input type="text" name="group_name" class="border border-zinc-300 hover:bg-zinc-50 rounded-md  p-1 w-full outline-none"  >
-                </div>
-                
-                <div class="p-3 ">
-                    <label for="members_list" class="w-full">Members</label>
-                    {% for user in persons %}
-                    {% if user.user != request.user %}
-                    <div class="block ">
-                      <input type="checkbox"  name="members" value="{{user.user.username}}">
-                      <label for="{{user.user.username}}">{{user.user.username}} </label>
-                    </div>
+            {% if messages %}
+            <ul class="messages mx-3 my-2 rounded my-1" >
+                {% for message in messages %}
+                <div class="message-{{message.tags}}">
+                    {% if message.tags  %}
+                    <li style="color: red;border: 1px solid rgb(206, 0, 0); padding: 5px 10px;border-radius: 10px;background-color: rgb(255, 166, 166);" >{{ message }}</li>
                     {% endif %}
-                    {% endfor%}
                 </div>
-                
-
-                <button type="submit" class="ml-[25px] px-3 text-white py-2 bg-orange-500/80 hover:bg-orange-500/100 rounded-lg shadow-lg shadow-orange-500/50" > Submit</button>
-            </form>
+                {% endfor %}
+            </ul>
+            {% endif %}
         </div>
+        <div class="flex justify-center mt-14 ">
+                <form method="post" action="{% url 'create_group' %}" class="shadow-3xl border shadow-green-100 bg-green-100 rounded-lg p-3">
+                    {% csrf_token %}
+                    
+                    <h1 class="text-3xl mx-2 tracking-tighter font-semibold">Create Group</h1>
+                    
+                    
+                    <div class="p-3 flex flex-wrap ">
+                        <label for="group" class="w-full">Name</label>
+                        <input type="text" name="group_name" class="border border-zinc-300 hover:bg-zinc-50 rounded-md  p-1 w-full outline-none"  >
+                    </div>
+                    
+                    <div class="p-3 ">
+                        <label for="members_list" class="w-full">Members</label>
+                        {% for user in persons %}
+                        {% if user.user != request.user %}
+                        <div class="block ">
+                          <input type="checkbox"  name="members" value="{{user.user.username}}">
+                          <label for="{{user.user.username}}">{{user.user.username}} </label>
+                        </div>
+                        {% endif %}
+                        {% endfor%}
+                    </div>
+                    
+    
+                    <button type="submit" class="ml-[25px] px-3 text-white py-2 bg-orange-500/80 hover:bg-orange-500/100 rounded-lg shadow-lg shadow-orange-500/50" > Submit</button>
+                </form>
+            </div>
+        </div>
+    
     </div>
+    </div>
+    <div class="w-1/5 ">
+       
+    </div>
+</div>
 
+    <script>
+        function ask(param) {
+           
+           var span = document.getElementById('member-name');
+           span.innerText = param;
+           var div = document.getElementById('confirmationModal-'+param);
+           console.log(div);
+           div.classList.remove('hidden');
+           location.stop()
+        };
+        function selfReload(){
+            location.reload()
+        }
+        function add_member_form(){
+            var form = document.getElementById('add-member-form')
+            if  (form.classList.contains('hidden'))  
+            {
+                form.classList.remove('hidden');  
+            }  
+            else 
+            {
+                form.classList.add('hidden');
+            }
+        }
+        
 
+    </script>
 {% endblock %}
+<!-- {% url 'remove_member_group' group.id member.user.id %} -->
+
+
+
