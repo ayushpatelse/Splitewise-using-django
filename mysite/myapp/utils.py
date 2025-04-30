@@ -2,6 +2,7 @@
 from .models import Person,Group,Expense,ExpenseShare,Balance
 from django.http.response import JsonResponse
 from django.db.models import Sum
+from django.db.models import Q
 
 def create_balance(request):
     persons = Person.objects.all()
@@ -51,6 +52,8 @@ def create_expense_shares(expense:Expense,split_type:str,members,amounts=None,pe
             list_members = [Person.objects.get(id=int(m_id)) for m_id in members  ]
         else:
             ValueError('Members error')
+        
+        
         match split_type:
             case 'equal':
                 share_amt = expense.amount / len(list_members)
@@ -58,28 +61,36 @@ def create_expense_shares(expense:Expense,split_type:str,members,amounts=None,pe
                     m_object = ExpenseShare.objects.create(
                         expsAmount=float(share_amt),
                         expsPerson=member,
-                        expense=expense
+                        expense=expense,
+                        splitType=split_type,
                     )
 
             case 'unequal':
+                if '' in amounts: # remove blank space
+                    amounts = [amount for amount in amounts if amount!='' ]
+
                 if len(list_members)==len(amounts):
                     for i,member in enumerate(list_members):
                         ExpenseShare.objects.create(
                         expsAmount=float(amounts[i]),
                         expsPerson=member,
-                        expense=expense
-                        )
-                        
+                        expense=expense,
+                        splitType=split_type,
+                        ) 
                 else:
                     raise ValueError("Problem in unequal Expense Share")
 
             case 'percent':
+                if '' in percantage: # remove blank space
+                    percantage = [percent for percent in percantage if percent!='' ]
+
                 for i,member in enumerate(list_members):
                     share_amt = float((expense.amount * int(percantage[i]))/100)
                     ExpenseShare.objects.create(
                         expsAmount=share_amt,
                         expsPerson=member,
-                        expense=expense
+                        expense=expense,
+                        splitType=split_type,
                     )
             case _ :
                 raise ValueError("Invalid Expense Share")
@@ -88,3 +99,47 @@ def create_expense_shares(expense:Expense,split_type:str,members,amounts=None,pe
         print(error)
     
     
+# Expense Payer Changed
+def expense_payer_change(expense_id,new_payer_id):
+    try:
+        if(expense_id==new_payer_id):
+            raise Exception((str(expense_id) + ' === ' + str(new_payer_id)))
+        
+        expense = Expense.objects.get(id=expense_id)
+        new_payer = Person.objects.get(id=new_payer_id)
+        old_payer = expense.payer 
+        group = expense.group
+        
+        balances = Balance.objects.filter(group=group)
+        shares = ExpenseShare.objects.filter(expense=expense)
+        expShareOld = shares.filter(expsPerson=old_payer).first().expsAmount
+        print("expShareOld "+ str(expShareOld))
+        
+        # reduce the balance
+        newBalance = balances.filter(person=new_payer,rPerson=old_payer).first()
+        oldBalance = balances.filter(person=old_payer,rPerson=new_payer).first()
+        if(newBalance.person==new_payer and newBalance.rPerson==old_payer ):
+            newBalance.amount -= (expense.amount )
+        
+        # add the balance
+        if(oldBalance.person==old_payer and oldBalance.rPerson==new_payer ):
+            oldBalance.amount += (expense.amount )
+        print(str(old_payer) + "  " + str(new_payer))
+        # save the balance expesne
+        try:
+
+            newBalance.save()
+            oldBalance.save()
+            print("balance saved")
+        except:
+            raise Exception("Error! - Problem saving newBalance or oldBalance line 131 utils.py")
+
+        if new_payer in group.members.all():
+            payer_amt = shares.get(expsPerson=new_payer)
+            # balances(person=old_payer)
+        else:
+            print(new_payer.name + " Not in Group :" + group.groupName)
+        # print(expense,new_payer)
+    except Exception as error :
+        print('Error - function: expense_payer_change ,' ,error)
+        
