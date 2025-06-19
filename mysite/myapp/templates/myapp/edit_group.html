@@ -2,7 +2,15 @@
 
 {% load static %}
 {% block body %}
-    <div class="flex justify-center     " >
+    
+<div class="flex bg-zinc-700 min-h-screen">
+
+    <div class="w-1/5 text-white px-2 py-4">
+        <a href="{% url 'group_index' group.id %}" class=" hover:underline text-xl "><span class="material-icons align-middle">arrow_back</span>Back to Group </a>
+        <hr class="mt-4">
+    </div>
+    <div class="w-3/5 bg-zinc-500">
+        <div class="flex justify-center     " >
             <form method="post" action="{% url 'login' %}" class="shadow-3xl border mt-4 shadow-green-100 bg-green-300 rounded-lg p-3">
                 {% csrf_token %}
               
@@ -17,9 +25,13 @@
                </ul>
                {% endif %}
                 
-                <div class="my-4 mx-3  flex flex-wrap ">
-                    <span class="text-2xl font-semibold">{{group.groupName.capitalize}}
-                    </span>
+                <div class="my-4 mx-3 ">
+                    
+                    <hr class="bg-gray-800">
+                    <div class="text-2xl flex md:text-center font-semibold">
+                        {{group.groupName.capitalize}}
+                    </div>
+                    <hr>
                 </div>
                 
                 <div class="px-3 w-full ">
@@ -28,9 +40,9 @@
                         <span class="text-3xl text-blue-500 "><button class="cursor-pointer" type="button"  onclick="add_member_form()" >+</button></span>
                     </div>
                     
-                    <div class="hidden flex  my-1" id="add-member-form">
-                        <div class="add-member rounded-l-lg bg-zinc-700 text-white font-bold text-md p-2">Add Member</div>
-                        <div class=" overflow-y-auto bg-zinc-500 text-white w-full p-1 rounded-r-lg max-h-[63px]">
+                    <div class="hidden flex my-1 h-32 " id="add-member-form">
+                        <div class="add-member h-fit rounded-l-lg bg-zinc-700 text-white font-bold text-md p-2">Add Member</div>
+                        <div class=" overflow-y-auto bg-zinc-500 text-white w-full p-1 rounded-r-lg ">
 
                                 {% for person in persons %}
                                     {% if person not in members %}
@@ -44,18 +56,18 @@
                     
                     <ul class="bg-white w-full rounded-lg p-3">
                         <hr>
-                        {% for member in members%}
+                        {% for member in members %}
                         <li class="grid grid-cols-6 ">
-                            <span class="col-span-5 py-1" id="{{member}}" >{{member.name.capitalize}}</span>
-                            <a  onclick="ask('{{member}}')" class="col-span-1 "><img  src="{% static 'images/uses/remove-person.png' %}" class="w-10 cursor-pointer"></a>
+                            <span class="col-span-5 py-1" id="{{member.id}}" >{{member.name.capitalize}}</span>
+                            <a  onclick="ask('{{member.id}}')" class="col-span-1 "><img  src="{% static 'images/uses/remove-person.png' %}" class="w-10 cursor-pointer"></a>
                         </li>
                         <li class="w-full " id="Prompt">
-                            <div id="confirmationModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+                            <div id="confirmationModal-{{member.id}}" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
                                 <div class="bg-white p-6 rounded-lg shadow-md">
                                   <p class="mb-4" >Are you sure you want to remove this <span class="text-red-500" id="member-name"></span>?</p>
                                   <div class="flex justify-end">
                                     <button id="cancelBtn" onclick="selfReload()" class="mr-2 px-4 py-2 bg-gray-300 rounded">Cancel</button>
-                                    <a id="confirmBtn" href="{% url 'remove_member_group' group.id member.user.id %}"  class="px-4 py-2 bg-red-500 text-white rounded">Remove</a>
+                                    <a id="confirmBtn" href="{% url 'remove_member_group' group.id member.id %}"  class="px-4 py-2 bg-red-500 text-white rounded">Remove</a>
                                   </div>
                                 </div>
                               </div>
@@ -70,13 +82,19 @@
             </form>
         </div>
     </div>
+    </div>
+    <div class="w-1/5 ">
+       
+    </div>
+</div>
 
     <script>
         function ask(param) {
            
            var span = document.getElementById('member-name');
            span.innerText = param;
-           var div = document.getElementById('confirmationModal');
+           var div = document.getElementById('confirmationModal-'+param);
+           console.log(div);
            div.classList.remove('hidden');
            location.stop()
         };
@@ -99,3 +117,6 @@
     </script>
 {% endblock %}
 <!-- {% url 'remove_member_group' group.id member.user.id %} -->
+
+
+

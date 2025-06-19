@@ -20,6 +20,7 @@
             <form method="post" action="{% url 'edit_expense' expense.id %}" class="shadow-3xl border shadow-green-100 bg-green-100 rounded-lg p-3">
                 {% csrf_token %}
                 {% if form.errors %}
+                
                 <ul class="errorlist">
                     {% for field in form %}
                     {% for error in field.errors %}
@@ -31,10 +32,13 @@
                     {% endfor %} -->
                 </ul>
                 {% endif %}
-                <h1 class="text-3xl mx-2 tracking-tighter mb-3 font-semibold">Edit Expense
-                <span name="{{form.group.name}}" class="text-sm  mx-2 my-2 tracking-wider text-blue-500 font  px-3 py-2  ">to: {{expense.group.groupName}}</span>
+                <div class="flex justify-between">
 
-                </h1>
+                  <h1 class="text-3xl mx-2 tracking-tighter mb-3 font-semibold">Edit Expense
+                  </h1>
+                  <span name="{{form.group.name}}" class="text-sm  mx-2 my-2 tracking-wider text-blue-500 font  px-3 py-2  ">to: {{expense.group.groupName}}</span>
+                </div>
+                <input name="expense-id" value="{{expense.id}}" hidden>
                 
                 <hr  style="height: 2px;background-color: lightgray;">
                 <div class="flex">
@@ -60,10 +64,11 @@
                             <label for="group" class="w-full">Paid By</label>
                             <select name="{{form.payer.name}}" class="p-1" id="{{form.payer.name}}">
                             {% for member in lists_member %}
-                                <option value="{{member.id}}">{{member.name}}</option>
+                                <option value="{{member.id}}" {% if expense.payer.id == member.id %} selected {% endif %} >{{member.name}}</option>
                             {% endfor %}
                             </select>
                         </div>
+                        
                         <div class="px-2 mb-1 flex flex-wrap ">
                             <label for="group" class="w-full">Description</label>
                             <textarea name="{{form.description.name}}" class="w-full resize-none p-1" placeholder="add comment" rows="5" id="">
@@ -95,7 +100,7 @@
                                 <label for="{{member.id}}">{{member.name.capitalize}}</label>
                               </div>
                               
-                                <input name="members-included-amount" id="members-included-amount-{{member.id}}"  disabled class="opacity-0  border-zinc-300 bg-zinc-50 px-2 bg-transparent   outline-none" style="width: 30%;"
+                                <input name="members-included-amount"  id="members-included-amount-{{member.id}}"   class="opacity-0  border-zinc-300 bg-zinc-50 px-2 bg-transparent   outline-none" style="width: 30%;"
                                  inputmode="numeric" placeholder="00.0" type="text" >
                             </div>
                             {% endfor%}
@@ -133,58 +138,68 @@
   for (let index = 0; index < divs.length; index++) {
       var input = document.getElementById('members-included-amount-'+ids[index])
       if(divs[index].checked){
-        input.removeAttribute('disabled');
-        input.style.setProperty('opacity',100);
+        input.removeAttribute('readonly');
+        // input.style.setProperty('opacity',100);
 
       }
       else{
-        input.setAttribute('disabled',true);
-        input.style.setProperty('opacity',0);  
+        input.setAttribute('readonly',true);
+        // input.style.setProperty('opacity',0);  
       }
       //console.log(divs[index])
   }
  } 
   
-  divide.addEventListener('input',()=>{
-    // console.log(divide.value)
+ window.onload = valueInput();
+ 
+ divide.addEventListener('input',()=>{
+    valueInput();
+  });
+  
+  function valueInput(){
+    console.log( "int the event listner: " + divide.value);
     
-    if (divide.value!='equal' ){
+    // if (divide.value!='equal' ){
 
-      console.log("divide.value!='equal'",divide.value!='equal')
-      amount_list.forEach(element => {
-        element.removeAttribute('disabled');
-        element.classList.remove('opacity-0');
-      });
+      // console.log("divide.value!='equal'",divide.value!='equal')
+      
       let opt = document.getElementById('divide-amount-select').value;
+      console.log(opt);
       shares.forEach(data=>{
         let id = data['fields']['expsPerson']; 
         let value = data['fields']['expsAmount']; 
         let amt = document.getElementById('members-included-amount-'+ id);
-
-        if (opt === data['fields']['splitType']){
+        console.log()
+        // if (opt === data['fields']['splitType']){
           console.log(opt === data['fields']['splitType']);
           amt.value = value;
-        }
-        else
-        {
-          amt.value = '';
-        }
+        // }
+        // else
+        // {
+        //   amt.value = '';
+        // }
       })
       
-    } 
-    else if (divide.value==='equal'){
+    // }
+    if (divide.value==='equal'){
         console.log("divide.value==='equal'",divide.value==='equal');
         amount_list.forEach(element => {
-            element.setAttribute('disabled',true);
-            element.classList.add('opacity-0');
+
+            element.setAttribute('readonly',true);
+            // element.classList.add('opacity-0');
         });
-    };
+    }
+    else{
+      amount_list.forEach(element => {
+        element.removeAttribute('readonly');
+        // element.classList.remove('opacity-0');
+      });
+    }
     uncheckbox();
     console.log(divide.value)
-  });
-  
+  }
+
   uncheckbox();// Initial Condition
-    
   function value() {
     const amtList = document.getElementsByName('members-included-amount');
     let sumValue = 0;
