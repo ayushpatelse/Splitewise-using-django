@@ -1,4 +1,4 @@
-# Splitewise Using Django
+# Splitewise Using ![Django](/mysite/static/images/Extra/djagno.png)
 
 This document outlined a comprehensive plan for developing a web application that closely mirrored the functionality of Splitwise, a popular expense-sharing platform. The application was built using Python with the Django framework for the backend, Tailwind CSS and JavaScript for the frontend.
 
