@@ -2,8 +2,8 @@
   
   "name": "django-tailwind",
   "scripts": {
-    "build": "npx tailwindcss -i ./static/css/start.css -o ./static/css/styles.css --watch"
-  },
+    "build:css": "npx tailwindcss -i ./static/css/start.css -o ./static/css/styles.css --minify",
+    "dev": "npx tailwindcss -i ./static/css/start.css -o ./static/css/styles.css --watch"  },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
