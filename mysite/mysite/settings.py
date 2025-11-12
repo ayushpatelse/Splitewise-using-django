@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-m9n0buh&y^28)(ouk3@avc@h2r2f)r5x5*_1p_d3ab2@=d$6(8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -120,7 +120,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"),
+                    ]
+STATIC_ROOTS = [os.path.join(BASE_DIR, "static"),
                     ]
 
 # Default primary key field type
@@ -130,4 +133,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/login'
 
-ALLOWED_HOSTS = ['your-vercel-app-name.vercel.app', 'vercel.app', '127.0.0.1'] 
+ALLOWED_HOSTS = [ 'vercel.app', '127.0.0.1'] 

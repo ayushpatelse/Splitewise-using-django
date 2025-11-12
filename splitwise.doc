@@ -140,34 +140,13 @@ settlement: ForeignKey with settlement
 Function: create_person (Using User model for auth)
 - Creates person when new User register
 
-Function: create_initial_balance_group
-- creates balance with each member
-
-Function: create_expense_share_balance 
-- Populates shares of each member of group in expense share ,when new expense is added
-- Adjust the balance according to the new balance
-
-Function: delete_expense_adjust_balance
-- 
 Function: adjust_balance
 - changes balance when new settlement is created  
-
-Function: adjust_balance_new_expense ( not devloped )
-- change balance with new expense 
 
 Expesne delete
 - get all balance and reduce the amount of ExpenseShare 
 - add the balance in payer of expense
 
-- reduce the balance where payer is 
 
-
-Bugs Found 
-- when payer is changed the balance is not changed
 
 --------------------------------------------------Notes-----------------------------------------
-expense share is not created , as currently updating members included in expense
-
-ExpenseShare
-- Once the ExpenseShare created
-    - get the balance of payer and the person whose owing

@@ -4,147 +4,336 @@
 {% load filters %}
 {% block body %}
 
-    <div class="flex bg-zinc-700 min-h-screen">
+<div class="flex bg-zinc-700 min-h-screen">
 
-        <div class="w-1/5 text-white">
+    <div class="w-1/5 text-white">
 
-            <div class="flex flex-col rounded-md  p-4 ">
-                <div class="font-bold mb-2 ">
-                    <span class="text-xl p-1 flex justify-center ">Members</span>
-                    <hr>
-                    <div class="  p-2 text-sm tracking-wide  font-normal">
-
-                          {% for key,value in balances.items %}
-                            {% if value <= 0 %}
-                                <span class="py-4 capitalize">{{ key }} <span class=" text-green-400">gets back</span> <span class="get-back-amount">${{value|make_positive|floatformat:"2"}}</span> </span>
-                                <span>in total</span>
-                                <br>
-                            {% endif %}
-                          {% endfor %}
-
-                          {% for key,value in balances.items %}
-                            {% if value > 0 %}
-
-                                <span class="py-4 capitalize">{{ key }} <span class=" text-orange-300">Owes</span> ${{value|floatformat:"2"}}</span>
-                                <span>in total</span>
-                                <!-- <button class="border px- py-2 rounded-lg">Settle</button> -->
-                                <br>
-                            {% endif %}
-                          {% endfor %}
-                        </div>
+        <div class="flex flex-col rounded-md  p-4 ">
+            <div class="font-bold mb-2 ">
+                <div class="flex justify-between">
+                    <span class="text-xl p-1 flex justify-center ">Members </span>
+                    <a href="{% url 'group_edit' group.id %}" class="text-white  hover:text-orange-500 "><span
+                            class="material-icons   ">
+                            edit
+                        </span></a>
                 </div>
-            </div>
-            <div class="text-white  rounded-md  p-4 ">
-                <span class="flex  justify-center font-semibold">Individual Amount</span>
                 <hr>
-                {% for bal in User_bals %}
-                <div class=" mt-2  text-sm tracking-tighter">
-                    {% if bal.amount <= 0 %}
-                        <span class="inline-block align-middle mb-1">You get back <span class="text-green-300" >${{bal.amount|make_positive|floatformat:"2"}}</span> from {{bal.rPerson.name.capitalize}}</span>
-                    {% else %}
-                        <span class="inline-block align-middle mb-1">You owe <span class="text-orange-300"  >${{bal.amount|make_positive|floatformat:"2"}}</span> to {{bal.rPerson.name.capitalize}}</span>            
-                    {% endif %}
-                   <br>
-                        <a  href="{% url 'pay_amount' group.id %}?value={{bal.amount|make_positive}}&payer={{bal.rPerson.id}}" class="hover:bg-orange-400 w-fit block hover:text-white border border-1 border-orange-400 text-orange-400  rounded-lg text-xs px-2 py-1">Settle
-                            <span class="material-icons"></span>
-                        </a>
+                <div class="  p-2 text-sm tracking-wide  font-normal">
+
+                    {% for key,value in balances.items %}
+                    {% if value <= 0 %} <span class="py-4 capitalize">{{ key |display_name }} <span class=" text-green-400">Receive</span> <span class="get-back-amount">${{value|make_positive|floatformat:"2"}}</span>
+                        </span>
+                        <span>in total</span>
+                        <br>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% for key,value in balances.items %}
+                        {% if value > 0 %}
+
+                        <span class="py-4 capitalize">{{ key |display_name }} <span class=" text-orange-300">Owes</span>
+                            ${{value|floatformat:"2"}}</span>
+                        <span>in total</span>
+                        <!-- <button class="border px- py-2 rounded-lg">Settle</button> -->
+                        <br>
+                        {% endif %}
+                        {% endfor %}
                 </div>
-                {% endfor %}
             </div>
         </div>
-        <div class="w-3/5 bg-zinc-500">
-            <div class="flex justify-center py-3 " style="background-image: url('../../../static/images/uses/def_bg.jpg');">
-                <span class="text-3xl text-white"> {{group.groupName.capitalize}}</span>
-            </div>
-            {% if messages %}
-            <ul class="messages bg-white   rounded " >
-                {% for message in messages %}
-                {% if message.tags  %}
-                     <li class=" text-{{ message.tags }}-index" >
-                        <span class="material-icons px-2  ">payments</span>
-                        {{ message }}</li>
-                {% endif %}
-                {% endfor %}
-            </ul>
-            {% endif %}
-
-
-<!-- ------------------------------------------List start here---------------------------------------------------------------- -->
-            <div class="  flex justify-center items-center" id="add-group" >
-               
-                <div class="group my-3">
-                    <a href="{% url 'add_expense' group.id %}" class=" group-hover:bg-gray-500 group-hover:border-white self-center flex px-3 py-2 border-4 border-gray-700 text-gray-700 hover " style=" border-radius: 5px;">
-                        <span class="material-icons group-hover:text-white ">list_alt</span>
-                        <span class="font-3xl font-bold pl-2 space-y-2 group-hover:text-white">Add Expense</span>
+        <div class="text-white  rounded-md  p-4 ">
+            <span class="flex  justify-center font-semibold">Individual Amount</span>
+            <hr>
+            {% for bal in User_bals %}
+            <div class=" mt-2  text-sm tracking-tighter">
+                {% if bal.amount != 0 %}
+                {% if bal.amount <= 0 %} <span class="inline-block align-middle mb-1">You get back <span
+                    class="text-green-300">${{bal.amount|make_positive|floatformat:"2"}}</span> from
+                    {{bal.rPerson.name.capitalize | display_name}}</span>
+                    {% else %}
+                    <span class="inline-block align-middle mb-1">You owe <span
+                        class="text-orange-300">${{bal.amount|make_positive|floatformat:"2"}}</span> to
+                        {{bal.rPerson.name.capitalize |display_name}}</span>
+                        {% endif %}
+                        <br>
+                        
+                        {% if bal.amount != 0 %}
+                        <a href="{% url 'pay_amount' group.id %}?value={{bal.amount|make_positive}}&payer={{bal.rPerson.id}}"
+                        class="hover:bg-orange-400 w-fit block hover:text-white border border-1 border-orange-400 text-orange-400  rounded-lg text-xs px-2 py-1">Settle
+                        <span class="material-icons"></span>
                     </a>
-                </div>
+                    {% endif %}
+                {% endif %}
             </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="w-3/5 bg-zinc-500">
+        <div class="flex justify-center py-3 " style="background-image: url('../../../static/images/uses/def_bg.jpg');">
+            <span class="text-3xl text-white"> {{group.groupName.capitalize}}</span>
+        </div>
+        {% if messages %}
+        <ul class="messages bg-white   rounded ">
+            {% for message in messages %}
+            {% if message.tags %}
+            <li class=" text-{{ message.tags }}-index">
+                <span class="material-icons px-2  ">payments</span>
+                {{ message }}
+            </li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+
+        <!-- ------------------------------------------List start here---------------------------------------------------------------- -->
+        <div class="  flex justify-center items-center" id="add-group">
+
+
+            <div class="group my-3">
+                <a href="{% url 'add_expense' group.id %}"
+                    class=" group-hover:bg-gray-500 group-hover:border-white self-center flex px-3 py-2 border-4 border-gray-700 text-gray-700 hover "
+                    style=" border-radius: 5px;">
+                    <span class="material-icons group-hover:text-white ">list_alt</span>
+                    <span class="font-3xl font-bold pl-2 space-y-2 group-hover:text-white">Add Expense</span>
+
+                </a>
+            </div>
+        </div>
+
+
+
+        <hr>
+        {% for exp_month,exp_lists in expByMonth.items %}
+
+        <div name="exp_month">
+
+            <div class="month_year_name bg-gray-700 py-2 px-3 text-white w-full flex justify-center"
+                style="position: sticky;position: -webkit-sticky;top: 0;">{{exp_month}}</div>
+            <hr>
             {% for exp in exp_lists %}
 
-            <div class="grid grid-cols-7   text-white p-2 bg-gray-800" >
-                <div class="col-span-2" >
-                    <div class="flex">
-                        <img src="{% static 'images/add.png' %}"  width="50px" alt="image">
-                        <span name="name_{{exp.id}}" class="inline-block  text-2xl p-2 text-orange-300">
-                            <a href="{% url 'view_expense' exp.id %}">{{exp.expenseName}}</a>
-                            <span class=" block text-xs text-white">{{exp.payer}} paid ${{exp.amount|floatformat:"2"}}</span>
-                        </span>
+            <div name="exp-details" class="grid grid-cols-7   text-white p-2 bg-gray-800">
+                <div class="col-span-1">
+                    <div class="default-bg"><img src="{% static 'images/uses/expense.png' %}" width="50px" class=" rounded-lg" alt="image"></div>
+
+                </div>
+                <div class="col-span-2">
+                    <span name="name_{{exp.id}}" class="inline-block  text-2xl p-2 text-orange-300">
+                        <a href="{% url 'view_expense' exp.id %}">{{exp.expenseName}}</a>
+                        <span class="  text-xs text-white flex">{{exp.payer| display_name | capfirst }} paid $<div
+                                class="exp_amount {{exp_month}}">
+                                {{exp.amount|floatformat:"2"}}</div></span>
+                    </span>
+                </div>
+                <div class="col-span-2 text-xs mr-5 overflow-y-auto" id="exp-list">
+                    <!-- Add expense share -->
+                    <div class=" max-h-12" name="expense-member-div" style="max-height: 50px;">
+
+                        <div class="expense-share-details">
+                            {% for share in expShares %}
+                            {% if share.expense.id == exp.id and share.expsPerson.id != exp.payer.id %}
+
+                            <span class="main-span">
+
+                                {{share.expsPerson.name.capitalize |display_name}}
+                                <span class="text-orange-600">owes</span> ${{share.expsAmount | floatformat:2}}
+                                <br>
+                            </span>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+
                     </div>
                 </div>
-                <div class="col-start-3 col-span-2 text-xs  overflow-y-auto"  id="exp-list" >
-                    <!-- Add expense share -->
-                     <div class=" ">
 
-                         {% for share in expShares %}
-                         {% if share.expense.id == exp.id and share.expsPerson.id != exp.payer.id  %}
-
-                             {{share.expsPerson.name.capitalize}}{{share.count}} <span class="text-orange-600" >
-
-                             owes
-
-                            </span> ${{share.expsAmount | floatformat:2}}
-                             <br>
-
-                         {% endif %}
-
-                         {% endfor %}
-
-
-                     </div>
-                </div>
-                <div class="col-end-6 col-span-1  text-lg pt-3   flex">
+                <div class=" col-span-1  text-lg pt-3   flex">
                     <!-- Add options -->
-                     <a href="{% url 'edit_expense' exp.id %}" ><span class="material-icons px-2  text-yellow-500" style="font-size: larger;">edit</span><span class="text-sm">Edit</span></a>
-                     <a  onclick="delete_ask()" class="cursor-pointer" ><span style="font-size: larger;" class="material-icons px-2 text-red-500">delete</span><span class="text-sm">Delete</span></a>
-                     <div id="confirmationModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+                    <a href="{% url 'edit_expense' exp.id %}"><span class="material-icons px-2  text-yellow-500"
+                            style="font-size: larger;">edit</span><span class="text-sm">Edit</span></a>
+                    <a onclick="delete_ask()" class="cursor-pointer"><span style="font-size: larger;"
+                            class="material-icons px-2 text-red-500">delete</span><span
+                            class="text-sm">Delete</span></a>
+                    <div id="confirmationModal"
+                        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
                         <div class="bg-zinc-500 p-6 rounded-lg shadow-md">
-                          <p class="mb-4" >Are you sure you want to remove this <span class="text-red-300" >'{{exp.expenseName}}' </span> ?</p>
-                          <div class="flex justify-end">
-                            <button id="cancelBtn" onclick="location.reload()" class="mr-2 px-4 py-2 bg-gray-300 rounded">Cancel</button>
-                            <a id="confirmBtn" href="{% url 'delete_expense' exp.id %}"  class="px-4 py-2 bg-red-500 text-white rounded">Remove</a>
-                          </div>
+                            <p class="mb-4">Are you sure you want to remove this <span
+                                    class="text-red-300">'{{exp.expenseName}}' </span> ?</p>
+                            <div class="flex justify-end">
+                                <button id="cancelBtn" onclick="location.reload()"
+                                    class="mr-2 px-4 py-2 bg-gray-300 rounded">Cancel</button>
+                                <a id="confirmBtn" href="{% url 'delete_expense' exp.id %}"
+                                    class="px-4 py-2 bg-red-500 text-white rounded">Remove</a>
+                            </div>
                         </div>
-                      </div>
+                    </div>
                 </div>
                 <div class=" col-end-8   tracking-tighter col-span-1  py-1">
                     <span class=" inline-block  text-2xl text-gray-200">
-                        {{exp.date| date:"F"}}
+
+                        <div name="month">{{exp.date| date:"F"}}</div>
                         <span class=" block text-xs text-center">{{exp.date| date:"j D"}}</span>
                     </span>
                 </div>
             </div>
             <hr>
             {% endfor %}
-
-
         </div>
-        <div class="w-1/5 ">
-            <div>
-                <canvas id="myChart"></canvas>
-              </div>
+
+        {% endfor %}
+
+
+        <div style="position: fixed;bottom: 5px;right: 190px;" class="group" id="go-back-top">
+            <button class="bg-orange-400 text-white px-3 rounded-lg py-2"><span class="material-icons">north</span>
+            </button>
+            <span hidden id="help-text" class="text-xs bg-gray-500 px-2 py-1 mb-1 text-white rounded-lg "
+                style="position: fixed;bottom: 43px;right: 175px;">Back to top</span>
+        </div>
+        <span>
+
+        </span>
+    </div>
+    <div class="w-1/5 ">
+        <div class="pt-2 px-2">
+            <div class=" flex justify-between">
+                <div class="text-left font-bold text-xl mx-2 text-white">
+                    Filter:
+                </div>
+            </div>
+
+            <!-- Filter Forms -->
+            <hr class="mb-3">
+            <form method="GET" action="" class="px-2 bg-gray-600 p-2 rounded-md  text-white items-center">
+                <div class="mb-3 text-xs flex">
+                    <label for="">Keyword :</label>
+                    <input type="text" name="keyword" placeholder=" Any keyword"
+                        class="mx-1 outline-none bg-transparent border-b-2 px-1 py-1 " value="{{query.keyword}}" name=""
+                        id="">
+                </div>
+
+                <div class="mb-3 text-xs ">
+                    <label for="">Date :</label>
+                    <input type="text" name="d_from" placeholder="dd/mm/yyyy"
+                        class="mx-1 outline-none bg-transparent border-b-2  py-1 w-1/3 " value="{{query.d_from}}">
+                    <input type="text" name="d_to" placeholder="dd/mm/yyyy"
+                        class="mx-1 outline-none bg-transparent border-b-2  py-1 w-1/3 " value="{{query.d_to}}">
+                </div>
+
+                <div class="mb-3 text-xs ">
+                    <label for="">Price :</label>
+                    <input type="text" name="p_from" placeholder=" From"
+                        class="mx-1 outline-none bg-transparent border-b-2 px-1 py-1 w-1/3 " value="{{query.p_from}}">
+                    <input type="text" name="p_to" placeholder=" To"
+                        class="mx-1 outline-none bg-transparent border-b-2 px-1 py-1 w-1/3 " value="{{query.p_to}}">
+                </div>
+
+                <button type="submit"
+                    class="bg-orange-500 text-right text-xs text-white p-2 rounded-md hover:bg-orange-600">Apply</button>
+            </form>
         </div>
     </div>
+</div>
 
-    
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'javascripts/main.js' %}"></script>
+<script>
+
+
+    // -----------------------------//
+    var backToTop = document.getElementById('go-back-top');
+    backToTop.addEventListener('mouseover', function () {
+        document.getElementById('help-text').removeAttribute('hidden', false);
+    })
+    backToTop.addEventListener('mouseout', function () {
+        document.getElementById('help-text').setAttribute('hidden', true);
+    })
+    backToTop.addEventListener('click', function () {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+    })
+
+    var ChartData = {};
+
+    var dateList = [];
+    document.querySelectorAll('div.month_year_name').forEach(name => {
+        dateList.push(name.innerText)
+    })
+
+    sumAmountGraph();
+    function sumAmountGraph() {
+        var expList = document.getElementsByName('exp_month');
+        var i = 0;
+        expList.forEach(div => {
+            let sumVal = 0;
+            let amtDiv = div.querySelectorAll('div.exp_amount', dateList[i]);
+            amtDiv.forEach(element => {
+                sumVal += parseFloat(element.innerText);
+            })
+            ChartData[dateList[i]] = sumVal;
+            i++;
+            //console.log('New month',sumVal);
+        })
+    }
+    console.log('chart data', Object.keys(ChartData));
+    const ctx = document.getElementById('myChart');
+    console.log(Object.keys(ChartData).length)
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(ChartData).slice(-5),
+            datasets: [{
+                label: Object.keys(ChartData).length != 0 ? 'Monthly expense' : 'No Expense',
+                data: Object.values(ChartData).slice(-5),
+                borderWidth: 1,
+                backgroundColor: [
+                    'rgba(255, 0, 55, 0.48)',
+                    'rgba(3, 154, 255, 0.48)',
+                    'rgba(251, 181, 4, 0.48)',
+                    'rgba(4, 254, 254, 0.48)',
+                    'rgba(85, 0, 255, 0.48)',
+                    'rgba(249, 125, 0, 0.48)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'white'
+                    }
+                },
+
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                    ticks: {
+                        color: 'white'
+                    }
+                },
+                y: {
+
+                    stacked: true,
+                    ticks: {
+                        color: 'white'
+                    }
+                }
+            }
+        }
+    });
+
+    document.cookie = JSON.stringify({ 'group': '{{group.groupName}}', 'data': ChartData })
+</script>
 {% endblock %}

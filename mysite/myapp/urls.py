@@ -7,7 +7,6 @@ urlpatterns = [
     path('logout',LogoutView.as_view(template_name='myapp/logout.html'),name="logout"),
     path('login',views.login_user,name="login"),
     path('register',views.register,name="register"),
-    path('dashboard',views.dashboard,name="dashboard"),
     # group function urls
     path('create_group',views.create_group,name="create_group"),
     path('group_index/<int:id>',views.group_index,name="group_index"),

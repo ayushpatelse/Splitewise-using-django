@@ -1,8 +1,9 @@
 # Implement the function to use in the program
-from .models import Person,Group,Expense,ExpenseShare,Balance
+from .models import Person,Group,Expense,ExpenseShare,Balance,Settlement,SettleTran,User
 from django.http.response import JsonResponse
 from django.db.models import Sum
 from django.db.models import Q
+from datetime import datetime
 
 def create_balance(request):
     persons = Person.objects.all()
@@ -46,6 +47,7 @@ def remain_balance(personId,groupId):
 
 def create_expense_shares(expense:Expense,split_type:str,members,amounts=None,percantage=None):
     try:
+        date_now = expense.date if expense.date else datetime.time()
         if len(members)>0 and isinstance(members[0],Person):
             list_members = members
         elif len(members)>0 and type(members[0])==str:
@@ -142,4 +144,4 @@ def expense_payer_change(expense_id,new_payer_id):
         # print(expense,new_payer)
     except Exception as error :
         print('Error - function: expense_payer_change ,' ,error)
-        
+    

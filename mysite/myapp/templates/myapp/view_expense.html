@@ -1,7 +1,9 @@
 {% extends 'myapp/base.html' %}
 
 {% load static %}
+{% load filters %}
 {% block body %}
+
 
     <div class="flex bg-zinc-700 min-h-screen">
 
@@ -17,7 +19,7 @@
             
             
         </div>
-        <div class="w-3/5 bg-zinc-500">
+        <div class="w-4/5 bg-zinc-500">
             <div class="flex justify-center py-3 " style="background-image: url('../../../static/images/uses/def_bg.jpg');">
                 <span class="text-3xl text-white"> {{expense.group.groupName}}</span>
             </div>
@@ -35,18 +37,22 @@
                             <div class="m-3">
                             $<span class="text-green-500">{{expense.amount}}</span>
                             <br>
+                            {% if expense.description %}
                             <textarea name="" id=""  cols="10" rows="5" class="p-2 mt-3 resize-none border bg-transparent border-gray-700">
                                 {{expense.description}}
                             </textarea>
+                            {% endif %}
                                 
                             </div>
                             
                         </div>
                         
                         <div class=" px-6  pt-2">
-                            <span class="text-md">{{expense.payer.name.capitalize}} add on : <span class="text-zinc-500"> {{expense.date|date:"j M Y"}}</span></span>
-                            <h1 class="mt-5 flex">Included:
-                            <ul class="pl-3 text-zinc-300 list-desc text-sm capitalize">
+                            <span class="text-md">{{expense.payer.name.capitalize }} add on :
+                                <br>
+                                <span class="text-zinc-500"> {{expense.date|date:"j M Y"}}</span></span>
+                            <h1 class="mt-5 ">Included:
+                            <ul class="bg-gray-700 p-3 rounded-lg text-zinc-300 list-desc text-sm capitalize">
                                {% for share in shares %}
                                 <li>{{share.expsPerson}} <span class="text-orange-300">owes </span>{{share.expsAmount}}</li>
                                {% endfor%}

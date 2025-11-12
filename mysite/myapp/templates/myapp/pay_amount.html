@@ -14,13 +14,10 @@
         <hr>
   </div>
   <div class="w-3/5 bg-gray-500">
-    
     <div class="flex justify-center mt-2 ">
       <form method="post" id="settle-form" action="" class=" mt-3 shadow-3xl border shadow-green-100 bg-green-100 rounded-lg p-3 ">
         {% csrf_token %}
        
-        
-
         <h1 class="text-3xl mx-2 tracking-tighter mb-2 font-semibold">Settlement</h1>
         <hr class="border border-t border-zinc-700">
         <div class="px-2 mb-1 flex flex-wrap mt-2 ">
@@ -52,15 +49,15 @@
         
         <div class="px-2 mb-1 flex flex-wrap ">
             <label for="amount" >Amount :</label>
-            <input type="number" name="{{form.amount.name}}" value="{{data.amount}}"  class="border ml-2 border-zinc-300 hover:bg-zinc-50 rounded-md  p-1  outline-none" >            
+            <input type="number" name="{{form.amount.name}}" value="{{data.amount|floatformat:'2'}}"  class="border ml-2 border-zinc-300 hover:bg-zinc-50 rounded-md  p-1  outline-none" >            
         </div>
         <div class="px-2 mb-1 flex flex-wrap ">
             <label for="group" class="">Group :</label>
             <input name="{{form.group.name}}" value="{{group.groupName}}" class=" border ml-2 border-zinc-300 hover:bg-zinc-50 rounded-md  p-1  outline-none"  id="">
         </div>
 
-
-        <button type="submit" class="ml-[25px] px-3 text-white py-2 bg-orange-500/80 hover:bg-orange-500/100 rounded-lg shadow-lg shadow-orange-500/50" > Submit</button>
+      <button type="submit" class="ml-[25px] px-3 text-white py-2 bg-orange-500/80 hover:bg-orange-500/100 rounded-lg shadow-lg shadow-orange-500/50" > Submit</button>
+      
     </form> 
         
        

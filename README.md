@@ -6,7 +6,7 @@ This document outlined a comprehensive plan for developing a web application tha
 To install the project, follow these steps:
 
 1. Clone the repository using git clone https://github.com/ayushpatelse/Splitewise-using-django.git
-2. Install the required dependencies using pip install -r requirements.txt.
+2. Install the required dependencies using  pip install -r requirements.txt.
 3. Set up the database by running python manage.py makemigrations and python manage.py migrate.
 4. Create a superuser account using python manage.py createsuperuser.
 5. Start the development server using python manage.py runserver.

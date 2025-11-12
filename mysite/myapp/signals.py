@@ -33,61 +33,6 @@ def create_balance_group(sender,instance,action,**kwargs):
         print("Create Balance:signal",action)
 
 
-# @receiver(post_save,sender=Expense)
-# def create_expense_share_balance(sender,instance,created,**kwargs):
-#     if created:
-#         expense = instance
-#         members = expense.group.members.all()
-#         numMembers = len(members) 
-#         if numMembers > 0 :
-
-#             # Logic for new ExpenseShare
-#             amtShare = expense.amount / numMembers or 0.0
-              
-#             for member in members:
-#                 ExpenseShare.objects.create(    
-#                     expense=expense,
-#                     expsAmount=amtShare,
-#                     expsPerson=member
-#                 )
-                
-#             # Logic for balance adjustment 
-#             balances = Balance.objects.filter(group=expense.group)
-#             payer = expense.payer
-            
-#             try :
-#                 for member in members:
-#                     if payer.id != member.id:
-#                         # Reduce the balance , where person = Expense Payer
-#                         redBalance = balances.filter(person=payer,rPerson=member)
-#                         # print('redBalance :',redBalance)
-#                         if redBalance.count() > 0:
-#                             temp = redBalance.first()
-                        
-#                             temp.amount = temp.amount -   amtShare
-#                             temp.save()
-#                            # print("reduce Amount:",temp.amount ,'AmtShare',amtShare, 'final:',temp.amount -   amtShare)
-                        
-#                         # Add the balance , where rPerson = Expense Payer
-#                         addBalance = balances.filter(person=member,rPerson=payer)
-#                        # print('addBalance :',redBalance)
-#                         if addBalance.count() > 0:
-#                             temp = addBalance.first()
-                        
-#                             temp.amount = temp.amount +  amtShare
-#                             temp.save()
-#                             #print("add Amount:",temp.amount ,'AmtShare',amtShare, 'final:',temp.amount +   amtShare)
-            
-#             except Exception as error:
-#                 print('Error In calculating the balance',error)       
-#             # print("ExpenseShare Created")
-
-#         else:
-#             print("Could not divide as there is no member",members)
-        
-#     else:
-#         print("ExpenseShare not created",created)
-
 @receiver(post_save,sender=ExpenseShare)
 def adjust_balance_expenseshare(sender,instance,created,**kwargs):
     if created:

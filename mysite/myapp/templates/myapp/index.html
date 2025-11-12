@@ -4,54 +4,86 @@
 {% load filters %}
 {% block body %}
 <div class="flex bg-zinc-700">
-    
+
     <div class="w-1/5">
-        details
+        <div class="flex flex-col rounded-md text-white  p-4 ">
+            <div class="font-bold mb-2 ">
+                <span class="text-xl p-1 flex justify-center ">Group Balances </span>
+                <hr>
+                <div class="  p-2 text-sm tracking-wide  font-normal">
+
+                    {% for key,value in groupBals.items %}
+                    {% if value <= 0 %} <span class="py-4 capitalize">{{ key |display_name }} <span class=" text-green-400"> Receive</span> <span class="get-back-amount">${{value|make_positive|floatformat:"2"}}</span>
+                        </span>
+                        <span>in total</span>
+                        <br>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% for key,value in groupBals.items %}
+                        {% if value > 0 %}
+
+                        <span class="py-4 capitalize">{{ key |display_name }} <span class=" text-orange-300">Owes</span>
+                            ${{value|floatformat:"2"}}</span>
+                        <span>in total</span>
+                        <!-- <button class="border px- py-2 rounded-lg">Settle</button> -->
+                        <br>
+                        {% endif %}
+                        {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
     <div class=" w-3/5 ">
-    <div class="bg-zinc-500 p-3 border min-h-screen">
-        <span class="text-white mb-3 ">
-            <span class="font-semibold">
-                Showing the outstanding amount in groups, 
-            </span>
-            {% if balance <= 0 %}
-            <span class="text-green-300">${{balance|make_positive|floatformat:"2"}}</span>
+        <div class="bg-zinc-500 p-3 border min-h-screen">
+            <span class="text-white mb-3 ">
+                <span class="font-semibold">
+                    Showing the outstanding amount in groups,
+                </span>
+                {% if balance <= 0 %} <span class="text-green-300">${{balance|make_positive|floatformat:"2"}}</span>
             {% else %}
             <span class="text-orange-300">${{balance|floatformat:"2"}}</span>
             {% endif %}
-        </span>
-        <hr>
-        <br>
-        {% for group in groups %}
-        <div class="grid grid-cols-2 w-full rounded-md bg-zinc-700 mb-3 p-5 text-white"> 
-            <a href="{% url 'group_index' group.id %}" class="text-3xl font-bold ">
-              {{ group.groupName.capitalize }}
-            </a>
-            <div class="flex justify-self-end  inner-block align-text-bottom">
-                <a href="{% url 'add_expense' group.id %}" class=" text-xs ">
-                    <span class="material-icons" style="font-size: xx-large;">add</span>
-                    <span hidden>Add Expense</span>                    
-                </a> 
-                <a href="{% url 'group_edit' group.id %}" class="text-xs " ><img class="pl-5 w-10" src="{% static 'images/uses/list-icon.png' %}" alt="">
-                <span>Member edit</span>
-                </a> 
+            </span>
+            <hr>
+            <br>
+            {% for group in groups %}
+            <div class="grid grid-cols-2 w-full rounded-md bg-zinc-700 mb-3 p-5 text-white">
+                <a href="{% url 'group_index' group.id %}" class="groupName text-3xl font-bold ">{{group.groupName.capitalize }}</a>
+                <div class="flex justify-self-end  inner-block align-text-bottom gap-4">
+                    <a href="{% url 'add_expense' group.id %}" class=" text-xs  ">
+                        <span class="material-icons" id="add-{{group.groupName.capitalize}}"
+                            style="font-size: xx-large;">add</span>
+                            <br>
+                        <!-- <span id="add-message-{{group.groupName.capitalize}}" class="text-xs" hidden>Add Expense</span> -->
+                    </a>
+                    <a href="{% url 'group_edit' group.id %}">
+                        <span id="member-edit-{{group.groupName.capitalize}}" style="font-size: xx-large;"
+                            class="material-icons">list_alt</span>
+                        <!-- <span id="member-edit-message-{{group.groupName.capitalize}}" hidden>Member edit</span> -->
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="  flex justify-center items-center" id="add-group">
+                <div class="group p-5">
+                    <a href="{% url 'create_group' %}"
+                        class=" group-hover:bg-green-500  self-center px-3 py-2 border-4 border-green-500 text-green-400 hover "
+                        style=" border-radius: 5px;">
+                        <span
+                            class=" group-hover:text-white inline-block pt-3 material-icons   font-bold">group_add</span>
+                        <span class=" text-2xl  inline-block  group-hover:text-white">Create Group</span>
+                    </a>
+                </div>
             </div>
         </div>
-        {% endfor %} 
-        <div class="  flex justify-center items-center" id="add-group" >
-            <div class="group p-5">
-                <a href="{% url 'create_group' %}" class=" group-hover:bg-green-500  self-center px-3 py-2 border-4 border-green-500 text-green-400 hover " style=" border-radius: 5px;">
-                    <span class=" group-hover:text-white inline-block pt-3 material-icons   font-bold">group_add</span>
-                    <span class=" text-2xl  inline-block  group-hover:text-white">Create Group</span>
-                </a>
-            </div>
-        </div>
-    </div>
     </div>
     <div class="w-1/5 ">
-        
-        </div>
+
+    </div>
 </div>
 
-{% endblock %}
+<script>
 
+  </script>
+{% endblock %}
