@@ -1,0 +1,61 @@
+commit eb71c41f7f4779167b27d24bdd70e2b65758837d
+Author: Ayush <ayushpatelse@gmail.com>
+Date:   Fri Jan 10 21:51:00 2025 -0500
+
+    Add add_expense.html edit_expense.html
+
+commit 9f92602aac55b92ee809570210ea4e5208470105
+Merge: d4a557c 5a43306
+Author: Ayush <ayushpatelse@gmail.com>
+Date:   Fri Jan 10 18:51:42 2025 -0500
+
+    Merge branch 'main' of https://github.com/ayushpatelse/Splitewise-using-django
+
+commit d4a557ce25b490336ff9fbd249b1695cc2f6935d
+Author: Ayush <ayushpatelse@gmail.com>
+Date:   Fri Jan 10 18:51:24 2025 -0500
+
+    Add edit expense function
+
+commit 3aaf0341709e36950c607e13ba56bbb725d409c1
+Author: Ayush <ayushpatelse@gmail.com>
+Date:   Fri Jan 10 18:46:15 2025 -0500
+
+    edit expense function changed
+
+commit 5a43306426ab98551a197ae3667b7890f37bffb5
+Author: ayushpatelse <139006173+ayushpatelse@users.noreply.github.com>
+Date:   Thu Jan 9 11:48:33 2025 -0500
+
+    Create requirements.txt
+
+commit 969067c4d2fc941eae14a6da954d7ebda52cc5ce
+Author: ayushpatelse <139006173+ayushpatelse@users.noreply.github.com>
+Date:   Thu Jan 9 11:15:41 2025 -0500
+
+    Create django.yml
+
+commit 48ca40a224b56093eb6a4cbee46a36fc1df02f6c
+Merge: 1bdc27d fadec0e
+Author: Ayush <ayushpatelse@gmail.com>
+Date:   Thu Jan 9 11:08:21 2025 -0500
+
+    Merge branch 'main' of https://github.com/ayushpatelse/Splitewise-using-django
+
+commit 1bdc27d5e41f33abcb139cb801accf4d98e2946e
+Author: Ayush <ayushpatelse@gmail.com>
+Date:   Thu Jan 9 11:06:21 2025 -0500
+
+    Initial Commit
+
+commit fadec0efc685eb04fba14ac3e6c1117680ea37d3
+Author: ayushpatelse <139006173+ayushpatelse@users.noreply.github.com>
+Date:   Thu Jan 9 10:37:28 2025 -0500
+
+    Update README.md
+
+commit 0392925528448edd0cab489e637d0eb5fa5ece66
+Author: ayushpatelse <139006173+ayushpatelse@users.noreply.github.com>
+Date:   Thu Jan 9 10:36:20 2025 -0500
+
+    Initial commit

@@ -11,11 +11,11 @@ from django.db.models import Sum
 from .utils import remain_balance,create_expense_shares,expense_payer_change
 from django.db.models import Q
 
-# 404 Redirect
-def custom_page_404(request,exception=None):
-    print("Entered")
-    redirect('/')
-
+# # 404 Redirect
+# def custom_page_404(request,exception=None):
+#     print("Entered")
+#     return redirect('/')
+     
 # Create your views here.
 @login_required
 def index(request):
