@@ -1,0 +1,21 @@
+# Force Python primary, add Node.js for Tailwind
+[providers]
+nixpacks = ["python", "node"]  # Key: Prioritizes Python, includes Node
+
+[phases.setup]
+nixPkgs = ["python3", "nodejs-20"]
+
+[phases.install]
+cmds = [
+  "pip install --no-cache-dir -r requirements.txt",  # Installs Django, gunicorn first
+  "npm ci"  # Installs Tailwind (use ci for speed/reproducibility)
+]
+
+[phases.build]
+cmds = [
+  "npm run build:css",  # Builds styles.css (no --watch!)
+  "python manage.py collectstatic --noinput"  # Copies to staticfiles/
+]
+
+[start]
+cmd = "python manage.py migrate && gunicorn mysite.wsgi --bind 0.0.0.0:$PORT --log-file -"
