@@ -5,12 +5,17 @@
     "nixpacksPlan": {
       "phases": {
         "setup": {
-          "nixPkgs": ["python3", "nodejs-20"]
+          "nixPkgs": ["python3", "nodejs-20"],
+          "aptPkgs": []
+        },
+        "install": {
+          "cmds": [
+            "pip install --no-cache-dir -r requirements.txt",
+            "npm install"
+          ]
         },
         "build": {
           "cmds": [
-            "pip install -r requirements.txt",
-            "npm install",
             "npm run build:css",
             "python manage.py collectstatic --noinput"
           ]
