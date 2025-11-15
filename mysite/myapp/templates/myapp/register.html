@@ -21,11 +21,11 @@
               <ul class="errorlist">
                 {% for field in user%}
                   {% for error in field.errors %}
-                    <li>{{ error }}</li>
+                    <li>{{ error }} - {{field.name}}</li>
                   {% endfor %}
                 {% endfor %}
                 {% for error in user.non_field_errors %}
-                  <li>{{ error }}</li>
+                  <li>{{ error }}- {{field.name}}</li>
                 {% endfor %}
               </ul>
             {% endif %}
@@ -43,7 +43,12 @@
               
               <div class="p-3 flex flex-wrap ">
                   <label for="username" class="w-full ">Password</label>
-                  <input type="password" name="{{user.password.name}}" id="{{user.password.name}}" class="border border-green-500 border-3 hover:bg-zinc-50 rounded-md  p-1 w-full outline-none"  >
+                  <input type="password" name="{{user.password1.name}}" id="{{user.password1.name}}" class="border border-green-500 border-3 hover:bg-zinc-50 rounded-md  p-1 w-full outline-none"  >
+              </div>
+
+              <div class="p-3 flex flex-wrap ">
+                  <label for="username" class="w-full ">Confirm Password</label>
+                  <input type="password" name="{{user.password2.name}}" id="{{user.password2.name}}" class="border border-green-500 border-3 hover:bg-zinc-50 rounded-md  p-1 w-full outline-none"  >
               </div>
               
              

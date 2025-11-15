@@ -35,6 +35,7 @@ def index(request):
 def register(request):
     if request.method == "POST":
         user_form = RegisterUser(request.POST)
+        print(request.POST)
         if user_form.is_valid() :
             user = user_form.save()
             return redirect('login') 
