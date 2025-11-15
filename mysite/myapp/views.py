@@ -53,6 +53,8 @@ def login_user(request):
             login(request, user)
             return redirect('index')
         else:
+            print("Given Input: Username Password Auth")
+            print("\t ",username,password,user)
             print("Error Occured")
 
     return render(request,"myapp/login.html")
