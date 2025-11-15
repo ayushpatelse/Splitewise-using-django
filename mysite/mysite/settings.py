@@ -27,6 +27,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY','django-insecure-m9n0buh&y^28)(ouk3@avc
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 
+ALLOWED_HOSTS = [ 'localhost','127.0.0.1','splitewise-using-django-production.up.railway.app']
+
+CSRF_TRUSTED_ORIGINS = ['https://splitewise-using-django-production.up.railway.app']
+
 
 # Application definition
 
@@ -142,5 +146,3 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/login'
-
-ALLOWED_HOSTS = [ '*'] 
